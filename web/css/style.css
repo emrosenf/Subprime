@@ -75,3 +75,25 @@ body {
 .loading_inner {
   padding-top: 200px;
 }
+
+
+
+body {
+  background: #E6E6E6;
+}
+
+.layer path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+#county path {
+  stroke: rgb(192, 192, 192);
+  stroke-opacity: .25;
+  shape-rendering: crispEdges;
+}
+
+#state path {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}

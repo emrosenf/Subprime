@@ -1,3 +1,4 @@
+<!--
 <html>
   <head>
     <title>San Francisco Street Pavement</title>
@@ -28,6 +29,57 @@
             <input type="submit" value="Update" />
           </div>
         </form>
+      </div>
+      <div id="temp_button" style="background-color: black; color: white; height: 100px; width: 100px; text-align: center; margin: auto; margin-top: 100px;">
+        <div style="padding-top: 35px">test update</div>
+      </div>
+    </div>
+    <div id="loading">
+      <div class="loading_inner">
+        Loading, please wait...<br/>
+        <img src="loading.gif" />
+      </div>
+    </div>
+    <div id="map">
+      <script type="text/javascript" src="streets.js"></script>
+    </div>
+  </body>
+</html>
+-->
+
+<html>
+  <head>
+    <title>Population Density</title>
+    <script type="text/javascript" src="http://polymaps.org/protodata.min.js?3.2"></script>
+    <script type="text/javascript" src="http://polymaps.org/polymaps.min.js?2.2.0"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div id="sidebar">
+      <div class="title">Subprime stuff</div>
+      <div class="subtitle">Ravi Parikh and Evan Rosenfeld</div>
+      <div id="tooltip">Click a region to interact</div>
+      <div class="filters_container">
+        <form name="filter_form">
+          <div class="filter">
+            <div class="filter_title">Geography Aggregation</div>
+            <input type="radio" name="geo" value="county" checked>County</input><br/>
+            <input type="radio" name="geo" value="state">State</input><br/>
+          </div>
+          <div class="filter">
+            <div class="filter_title">Metric</div>
+            <input type="radio" name="metric" value="rate" checked>Rate spread</input><br/>
+            <input type="radio" name="metric" value="income">Income</input><br/>
+            <input type="radio" name="metric" value="loan">Loan amount</input><br/>
+          </div>
+          <div class="filter_update">
+            <input type="submit" value="Update" />
+          </div>
+        </form>
+      </div>
+      <div id="temp_button" style="background-color: black; color: white; height: 100px; width: 100px; text-align: center; margin: auto; margin-top: 100px;">
+        <div style="padding-top: 35px">test update</div>
       </div>
     </div>
     <div id="loading">
