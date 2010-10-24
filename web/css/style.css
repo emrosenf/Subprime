@@ -49,6 +49,18 @@ body {
   height: 80px;
 }
 
+.filters_container {
+  margin-left: 10px;
+}
+
+.filter {
+  margin-bottom: 10px;
+}
+
+.filter_title {
+  font-weight: bold;
+}
+
 #loading {
   position:absolute;
   background-color: white;
