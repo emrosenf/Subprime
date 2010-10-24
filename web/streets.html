@@ -4,39 +4,13 @@
     <script type="text/javascript" src="http://polymaps.org/protodata.min.js?3.2"></script>
     <script type="text/javascript" src="http://polymaps.org/polymaps.min.js?2.2.0"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
-    <style type="text/css">
-
-body {
-  background: #021019;
-  margin: 0px;
-  padding: 0px;
-}
-
-.compass .back {
-  fill: #256574;
-}
-
-.compass .fore, .compass .chevron {
-  stroke: #1AA398;
-}
-
-#streets path {
-  fill: #fff;
-  opacity: 0.6;
-  stroke-linecap: round;
-}
-
-
-
-#copy, #copy a {
-  color: #1AA398;
-}
-
-    </style>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
   </head>
-  <body id="map">
-    <div id="tooltip" style="position:absolute; background-color: white; width: 100px; height: 100px">Click a region to interact</div>
-    <div id="loading" style="position:absolute; background-color: white; width: 100%; height:500px; text-align: center; padding-top: 200px; font-size: 24px; font-family: 'Lucida Grande', Arial; font-weight: bold; opacity: 0.6">
+  <body>
+    <div id="sidebar">
+      <div id="tooltip">Click a region to interact</div>
+    </div>
+    <div id="loading">
       Loading, please wait...<br/>
       <img src="loading.gif" />
     </div>
