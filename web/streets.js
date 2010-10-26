@@ -38,21 +38,6 @@ map.add(po.compass()
 
 $(function(){
 	
-	var unserialize = function(qs)
-	{
-		var parms = qs.split('&');
-		var retVal = [];
-		for (var i=0; i<parms.length; i++) {
-			var pos = parms[i].indexOf('=');
-			if (pos > 0) {
-				var key = parms[i].substring(0,pos);
-				var val = parms[i].substring(pos+1);
-				retVal[key] = val;
-			}
-		}
-		return retVal;
-	};
-	
 	var buildQuery = function(arr)
 	{
 		query = {};
@@ -69,7 +54,11 @@ $(function(){
 	};
 	
 	$("#filter_form").submit(function() {
-		var arr = unserialize($(this).serialize());
+		var arr = {};
+		$.each($(this).serializeArray(), function(index, data) {
+			arr[data.name] = data.value;
+		});
+		//var arr = unserialize($(this).serialize());
 		$.ajax({
 		        url: 'http://204.232.210.102:5011/query/lar',
 		        data: buildQuery(arr),
