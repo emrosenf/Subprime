@@ -29,8 +29,16 @@ var oldColor = 'white';
 function load(e) {
   for (var i = 0; i < e.features.length; i++) {
     var feature = e.features[i];
-    feature.element.setAttribute("id", feature.data.id);
+    var tempid = "county" + feature.data.id.substr(7);
+    if($('#' + tempid).length == 0) {
+      feature.element.setAttribute("id", tempid);
+    }
+    else {
+      feature.element.setAttribute("id", tempid + 'a');
+    }
     feature.element.setAttribute("class", "countyClass");
+    feature.element.setAttribute("style", "fill: green");
+    
   }
   $('.countyClass').click(function() {
     $('#tooltip').html('CLICKED!');
@@ -38,12 +46,101 @@ function load(e) {
   $('.countyClass').mouseover(function() {
     oldColor = $(this).css('fill');
     $(this).css('fill', '#fa6');
-    $('#tooltip').html();
+    $('#tooltip').html('value: ' + $(this).attr('metric'));
   });
   $('.countyClass').mouseleave(function() {
     $(this).css('fill', oldColor);
   });
 }
+
+var newdata;
+$(function(){
+	var unserialize = function(qs)
+	{
+		var parms = qs.split('&');
+		var retVal = [];
+		for (var i=0; i<parms.length; i++) {
+			var pos = parms[i].indexOf('=');
+			if (pos > 0) {
+				var key = parms[i].substring(0,pos);
+				var val = parms[i].substring(pos+1);
+				retVal[key] = val;
+			}
+		}
+		return retVal;
+	};
+	
+	var buildQuery = function(arr)
+	{
+		query = {};
+		group_by = ['state'];
+		fields = ['state', 'avg('+arr['metric']+')'];
+		if (arr['geo'] == 'county')
+		{
+			fields.push('county');
+			group_by.push('county');
+		}
+		query = {fields: fields.join(','), group_by: group_by.join(',')};
+		return query;
+		
+	};
+	
+	$("#filter_form").submit(function() {
+	    $('#loading').show();
+		var arr = unserialize($(this).serialize());
+		$.ajax({
+		        url: 'http://204.232.210.102:5011/query/lar',
+		        data: buildQuery(arr),
+		        dataType: "jsonp",
+		        success: function(data, status){
+		            newdata = data;
+		            var k = 0;
+		            var metricType = 'rate_spread'; //TODO: check which metric type
+		            var min = 3.5;
+		            var interval = 0.5;
+		            if(metricType == 'rate_spread') {
+		              min = 3.5;
+		              interval = 0.5;
+		            }
+		            for(k = 0; k < newdata.length; k++) {
+		              if(newdata[k].county != "-1" && newdata[k].state != "-1") {
+		                var idname = "county" + newdata[k].state + newdata[k].county;
+		                var metric = newdata[k].rate_spread; //TODO: check which metric type
+		                
+		                
+		                $('#' + idname).attr('metric', metric); 
+		                
+		                var fillval;
+		                if(metric < min) {
+		                  fillval = '#005';
+		                }
+		                else if(metric < min + interval) {
+		                  fillval = '#027';
+		                }
+		                else if(metric < min + 2*interval) {
+		                  fillval = '#049';
+		                }
+		                else if(metric < min + 3*interval) {
+		                  fillval = '#16a';
+		                }
+		                else if(metric < min + 4*interval) {
+		                  fillval = '#37d';
+		                }
+		                else {
+		                  fillval = '#58f';
+		                }
+		                $('#' + idname).css('fill', fillval);
+		                if($('#' + idname + 'a').length != 0) {
+		                  $('#' + idname + 'a').css('fill', fillval);
+		                }
+		              }
+		            }
+		            $('#loading').hide();
+		        }
+		    });
+		return false;
+	});
+});
 
 /*
 var po = org.polymaps;
