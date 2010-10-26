@@ -25,6 +25,7 @@ map.add(po.geoJson()
     
 setTimeout("$('#loading').hide()", 500);
 
+var metricType = '';
 var oldColor = 'white';
 function load(e) {
   for (var i = 0; i < e.features.length; i++) {
@@ -46,7 +47,7 @@ function load(e) {
   $('.countyClass').mouseover(function() {
     oldColor = $(this).css('fill');
     $(this).css('fill', '#fa6');
-    $('#tooltip').html('value: ' + $(this).attr('metric'));
+    $('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
   });
   $('.countyClass').mouseleave(function() {
     $(this).css('fill', oldColor);
@@ -95,17 +96,43 @@ $(function(){
 		        success: function(data, status){
 		            newdata = data;
 		            var k = 0;
-		            var metricType = 'rate_spread'; //TODO: check which metric type
+		            if(typeof newdata[0].rate_spread != 'undefined') {
+		              metricType = 'rate_spread';
+		            }
+		            else if(typeof newdata[0].income != 'undefined') {
+		              metricType = 'income';
+		            }
+		            else if(typeof newdata[0].loan_amount != 'undefined') {
+		              metricType = 'loan_amount';
+		            }
 		            var min = 3.5;
 		            var interval = 0.5;
 		            if(metricType == 'rate_spread') {
 		              min = 3.5;
 		              interval = 0.5;
 		            }
+		            else if(metricType == 'income') {
+		              min = 60;
+		              interval = 10;
+		            }
+		            else if(metricType == 'loan_amount') {
+		              min = 50;
+		              interval = 20;
+		            }
 		            for(k = 0; k < newdata.length; k++) {
 		              if(newdata[k].county != "-1" && newdata[k].state != "-1") {
 		                var idname = "county" + newdata[k].state + newdata[k].county;
-		                var metric = newdata[k].rate_spread; //TODO: check which metric type
+		                var metric;
+		                
+		                if(metricType == 'rate_spread') {
+		                  metric = newdata[k].rate_spread;
+		                }
+		                else if(metricType == 'income') {
+		                  metric = newdata[k].income;
+		                }
+		                else if(metricType == 'loan_amount') {
+		                  metric = newdata[k].loan_amount;
+		                }
 		                
 		                
 		                $('#' + idname).attr('metric', metric); 
