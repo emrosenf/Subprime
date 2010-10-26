@@ -26,7 +26,7 @@ map.add(po.geoJson()
 setTimeout("$('#loading').hide()", 500);
 
 var metricType = '';
-var oldColor = 'white';
+//var oldColor = 'white';
 function load(e) {
   for (var i = 0; i < e.features.length; i++) {
     var feature = e.features[i];
@@ -38,19 +38,19 @@ function load(e) {
       feature.element.setAttribute("id", tempid + 'a');
     }
     feature.element.setAttribute("class", "countyClass");
-    feature.element.setAttribute("style", "fill: green");
-    
+    feature.element.setAttribute("style", "fill: #555");
   }
+  $('.countyClass').attr('oldcolor', '#555');
   $('.countyClass').click(function() {
     $('#tooltip').html('CLICKED!');
   });
   $('.countyClass').mouseover(function() {
-    oldColor = $(this).css('fill');
-    $(this).css('fill', '#fa6');
+    //oldColor = $(this).css('fill');
+    $(this).css('fill', '#fff');
     $('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
   });
   $('.countyClass').mouseleave(function() {
-    $(this).css('fill', oldColor);
+    $(this).css('fill', $(this).attr('oldcolor'));
   });
 }
 
@@ -157,8 +157,10 @@ $(function(){
 		                  fillval = '#58f';
 		                }
 		                $('#' + idname).css('fill', fillval);
+		                $('#' + idname).attr('oldcolor', fillval);
 		                if($('#' + idname + 'a').length != 0) {
 		                  $('#' + idname + 'a').css('fill', fillval);
+		                  $('#' + idname + 'a').attr('oldcolor', fillval);
 		                }
 		              }
 		            }
