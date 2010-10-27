@@ -55,91 +55,59 @@
 			</div>
 		</li>
 	</ul>
-		  <!--<fieldset>
-          <div class="filter">
-            <div class="filter_title">Aggregate By</div>
-            <div class="field">
-				<input type="radio" name="geo" value="county" checked /><span>County</span>
-			</div>
-			<div class="field">
-            	<input type="radio" name="geo" value="state" /><span>State</span>
-			</div>
-          </div>
-          <div class="filter">
-            <div class="filter_title">Color By</div>
-			<div class="field">
-            	<input type="radio" name="metric" value="rate_spread" checked /><span>Rate spread</span>
-			</div>
-            <div class="field">
-				<input type="radio" name="metric" value="income" /><span>Income</span>
-			</div>
-            <div class="field">
-				<input type="radio" name="metric" value="loan_amount" /><span>Loan amount</span>
-			</div>
-          </div>
-		  </fieldset>-->
-       <!--</form>
-		<div style="border-top: 1px dotted #CCC">
-			<h3>Filter By Income</h3>
-			<div id="amount" style="border:0; color:#f6931f; font-weight:bold;"></div>
+	</div>
+	<ul class="legend ui-listview ui-listview-inset ui-corner-all ui-controlgroup ui-controlgroup-vertical ui-shadow">
+		<li class="ui-li ui-li-divider ui-btn ui-bar-b ui-corner-top">Legend</li>
+		<li class="ui-li ui-li-divider">
+		    <div class="legend_tile" style="background-color: #005">
+		    </div>
+		    <div class="legend_name" id="legend_name1">
+		      0 - 3.5%
+		    </div>
+		    <div style="clear:both"></div>
+		</li>
+		<li class="ui-li ui-li-divider">
+		    <div class="legend_tile" style="background-color: #027">
+		    </div>
+		    <div class="legend_name" id="legend_name2">
+		      3.5 - 4.0%
+		    </div>
+		    <div style="clear:both"></div>
+		</li>
+		<li class="ui-li ui-li-divider">
+		    <div class="legend_tile" style="background-color: #049">
+		    </div>
+		    <div class="legend_name" id="legend_name3">
+		      4.0 - 4.5%
+		    </div>
+		    <div style="clear:both"></div>
+		</li>
+		<li class="ui-li ui-li-divider">
+		    <div class="legend_tile" style="background-color: #16a">
+		    </div>
+		    <div class="legend_name" id="legend_name4">
+		      4.5 - 5.0%
+		    </div>
+		    <div style="clear:both"></div>
+		</li>
+		<li class="ui-li ui-li-divider">
+		    <div class="legend_tile" style="background-color: #37d">
+		    </div>
+		    <div class="legend_name" id="legend_name5">
+		      5.0 - 5.5%
+		    </div>
+		    <div style="clear:both"></div>
+		</li>
+		<li class="ui-li ui-li-divider">
+		    <div class="legend_tile" style="background-color: #58f">
+		    </div>
+		    <div class="legend_name" id="legend_name6">
+		      >6.0%
+		    </div>
+		    <div style="clear:both"></div>
+		</li>
+	</ul>
 
-			<div id="slider-range"></div>
-			<div id="summary" style="display:none;">
-				<h3>Top Lenders<h3>
-			</div>
-		</div>-->
-	</div>
-	<div class="legend">
-	  <div class="legend_title">Legend</div>
-	  <div class="legend_individual">
-	    <div class="legend_tile" style="background-color: #005">
-	    </div>
-	    <div class="legend_name" id="legend_name1">
-	      0 - 3.5%
-	    </div>
-	    <div style="clear:both"></div>
-	  </div>
-	  <div class="legend_individual">
-	    <div class="legend_tile" style="background-color: #027">
-	    </div>
-	    <div class="legend_name" id="legend_name2">
-	      3.5 - 4.0%
-	    </div>
-	    <div style="clear:both"></div>
-	  </div>
-	  <div class="legend_individual">
-	    <div class="legend_tile" style="background-color: #049">
-	    </div>
-	    <div class="legend_name" id="legend_name3">
-	      4.0 - 4.5%
-	    </div>
-	    <div style="clear:both"></div>
-	  </div>
-	  <div class="legend_individual">
-	    <div class="legend_tile" style="background-color: #16a">
-	    </div>
-	    <div class="legend_name" id="legend_name4">
-	      4.5 - 5.0%
-	    </div>
-	    <div style="clear:both"></div>
-	  </div>
-	  <div class="legend_individual">
-	    <div class="legend_tile" style="background-color: #37d">
-	    </div>
-	    <div class="legend_name" id="legend_name5">
-	      5.0 - 5.5%
-	    </div>
-	    <div style="clear:both"></div>
-	  </div>
-	  <div class="legend_individual">
-	    <div class="legend_tile" style="background-color: #58f">
-	    </div>
-	    <div class="legend_name" id="legend_name6">
-	      >6.0%
-	    </div>
-	    <div style="clear:both"></div>
-	  </div>
-	</div>
     <div id="loading">
       <div class="loading_inner">
         Updating Map . . .<br/>

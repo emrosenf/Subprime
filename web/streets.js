@@ -93,74 +93,62 @@ function load(e) {
 	$('#county' + counter).attr('oldcolor', fillColors[tempid]);
 	$('#county' + counter).attr('metric', metricArray[tempid]);
     $('#county' + counter).click(function() {
-      $('#tooltip').html('CLICKED!');
-    });
-    $('#county' + counter).mouseover(function() {
+	    var id = $(this).attr('countyid').substr(-5);
+
+		$.ajax({
+		        url: 'http://204.232.210.102:5011/query/lar',
+		        data: {fields:"state,income", state:id.substr(0,2), county:id.substr(2)},
+		        dataType: "jsonp",
+		        success: function(data, status){
+					var aggregates = aggregateData(data);
+					var respondents = aggregates['respondent_name'];
+					// Hack to sort associative array
+					var sortedArr = [];
+					for (name in respondents)
+					{
+						sortedArr.push([respondents[name], name]);
+					}
+					sortedArr.sort(function(a,b){
+						return b[0] - a[0];
+					});
+					var $el = $('<ol></ol>');
+					for (var i = 0; i < Math.min(sortedArr.length, 6); i++)
+					{
+						$el.append($('<li>'+sortedArr[i][1].toLowerCase().capitalize() + ' (' + sortedArr[i][0] + ')</li>'));
+					}
+					$('#summary').children().remove();
+					$('#summary').append($el);
+					$('#summary').show();
+				}
+		});
+    })
+    .mouseover(function() {
       var userFriendlyMetric = 'Rate Spread';
       if(metricType == 'income') { userFriendlyMetric = 'Income'; }
       if(metricType == 'loan_amount') { userFriendlyMetric = 'Loan Amount'; }
-      $('#tooltip').html(userFriendlyMetric + ': ' + $(this).attr('metric'));
-      $('.' + $(this).attr('countyid')).css('fill', '#fff');
-    });
-    $('#county' + counter).mouseleave(function() {
+	  $('.tipHeader').text(state_dict[$(this).attr('countyid').substr(6,2)] + ", county " + $(this).attr('countyid').substr(-3));
+      $('.tipBody').text(userFriendlyMetric + ': ' + $(this).attr('metric'));
+      //Set the X and Y axis of the tooltip  
+      $('#tooltip').css('top', e.pageY + 10 );  
+      $('#tooltip').css('left', e.pageX + 20 );  
+
+	  $('#tooltip').show();
+	  $('.' + $(this).attr('countyid')).css('fill', '#fff');
+    })
+    .mouseleave(function() {
       var oldcolor = $(this).attr('oldcolor');
       $('.' + $(this).attr('countyid')).css('fill', oldcolor);
-    });
+	  $('#tooltip').hide();
+    })
+	.mousemove(function(e) {  
+        $('#tooltip').css('top', e.pageY + 10 );  
+        $('#tooltip').css('left', e.pageX + 20 );  
+  	});
   }
 }
 
 function loadHandlers() {
-  /*
-  $('.countyClass').attr('oldcolor', '#555');
-  $('.countyClass').click(function() {
-    var id = $(this).attr('countyid').substr(-5);
-	
-	$.ajax({
-	        url: 'http://204.232.210.102:5011/query/lar',
-	        data: {fields:"state,income", state:id.substr(0,2), county:id.substr(2)},
-	        dataType: "jsonp",
-	        success: function(data, status){
-				var aggregates = aggregateData(data);
-				var respondents = aggregates['respondent_name'];
-				// Hack to sort associative array
-				var sortedArr = [];
-				for (name in respondents)
-				{
-					sortedArr.push([respondents[name], name]);
-				}
-				sortedArr.sort(function(a,b){
-					return b[0] - a[0];
-				});
-				var $el = $('<ol></ol>');
-				for (var i = 0; i < Math.min(sortedArr.length, 6); i++)
-				{
-					$el.append($('<li>'+sortedArr[i][1].toLowerCase().capitalize() + ' (' + sortedArr[i][0] + ')</li>'));
-				}
-				$('#summary').children().remove();
-				$('#summary').append($el);
-				$('#summary').show();
-			}
-	});
-  });
-  $('.countyClass').mouseover(function(e) {
-	$('.tipBody').text(metricType + ': ' + $(this).attr('metric'));
-    //Set the X and Y axis of the tooltip  
-    $('#tooltip').css('top', e.pageY + 10 );  
-    $('#tooltip').css('left', e.pageX + 20 );  
 
-	$('#tooltip').show();
-	$('.' + $(this).attr('countyid')).css('fill', '#fff');
-  })
-  .mouseleave(function() {
-	var oldcolor = $(this).attr('oldcolor');
-	$('.' + $(this).attr('countyid')).css('fill', oldcolor);
-	$('#tooltip').hide();
-  })
-  .mousemove(function(e) {  
-        $('#tooltip').css('top', e.pageY + 10 );  
-        $('#tooltip').css('left', e.pageX + 20 );  
-  });
-  */
 }
 
 var aggregateData = function(arr)
@@ -351,7 +339,8 @@ $(function(){
 					    var userFriendlyMetric = 'Rate Spread';
 					    if(metricType == 'income') { userFriendlyMetric = 'Income'; }
 					    if(metricType == 'loan_amount') { userFriendlyMetric = 'Loan Amount'; }
-						$('.tipBody').text(state_dict[$(this).attr('stateid').substr(-2)] + ' - ' + userFriendlyMetric + ': ' + $(this).attr('metric'));
+						$('.tipHeader').text(state_dict[$(this).attr('stateid').substr(-2)]);
+						$('.tipBody').text(userFriendlyMetric + ': ' + $(this).attr('metric'));
 				        //Set the X and Y axis of the tooltip  
 				        $('#tooltip').css('top', e.pageY + 10 );  
 				        $('#tooltip').css('left', e.pageX + 20 );  
