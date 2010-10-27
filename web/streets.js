@@ -1,5 +1,5 @@
 var state_dict = {'01':'Alabama', '02':'Alaska', '04':'Arizona', '05':'Arkansas', '06':'California', '08':'Colorado', '09':'Connecticut', '10':'Delaware', '12':'Florida', '13':'Georgia', '15':'Hawaii', '16':'Idaho', '17':'Illinois', '18':'Indiana', '19':'Iowa', '20':'Kansas', '21':'Kentucky', '22':'Louisiana', '23':'Maine', '24':'Maryland', '25':'Massachusetts', '26':'Michigan', '27':'Minnesota', '28':'Mississippi', '29':'Missouri', '30':'Montana', '31':'Nebraska', '32':'Nevada', '33':'New Hampshire', '34':'New Jersey', '35':'New Mexico', '36':'New York', '37':'North Carolina', '38':'North Dakota', '39':'Ohio', '40':'Oklahoma', '41':'Oregon', '42':'Pennsylvania', '44':'Rhode Island', '45':'South Carolina', '46':'South Dakota', '47':'Tennessee', '48':'Texas', '49':'Utah', '50':'Vermont', '51':'Virginia', '53':'Washington', '54':'West Virginia', '55':'Wisconsin', '56':'Wyoming', '72':'Puerto Rico'};
-
+var latest_data = {};
 String.prototype.capitalize = function(){
    return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
   };
@@ -100,25 +100,8 @@ function load(e) {
 		        data: {fields:"state,income", state:id.substr(0,2), county:id.substr(2)},
 		        dataType: "jsonp",
 		        success: function(data, status){
+					latest_data = data;
 					var aggregates = aggregateData(data);
-					var respondents = aggregates['respondent_name'];
-					// Hack to sort associative array
-					var sortedArr = [];
-					for (name in respondents)
-					{
-						sortedArr.push([respondents[name], name]);
-					}
-					sortedArr.sort(function(a,b){
-						return b[0] - a[0];
-					});
-					var $el = $('<ol></ol>');
-					for (var i = 0; i < Math.min(sortedArr.length, 6); i++)
-					{
-						$el.append($('<li>'+sortedArr[i][1].toLowerCase().capitalize() + ' (' + sortedArr[i][0] + ')</li>'));
-					}
-					$('#summary').children().remove();
-					$('#summary').append($el);
-					$('#summary').show();
 				}
 		});
     })
@@ -151,11 +134,15 @@ function loadHandlers() {
 
 }
 
-var aggregateData = function(arr)
+var aggregateData = function(arr,func)
 {
 	var agg = {"income": {}, "loan_amount" : {}, "sex" : {}, "respondent_name" : {}, "rate_spread" : {}};
+	var num_homes = 0;
 	$.each(arr, function(index, obj) {
 		var val;
+		if (!func || (func && func(obj)))
+		{
+			num_homes++;
 		for (prop in obj)
 		{
 			if (typeof obj[prop] != 'undefined')
@@ -186,14 +173,36 @@ var aggregateData = function(arr)
 				}
 			}
 		}
+		}
 	});
-	$("#slider-range").slider({
+	if (!func)
+	{
+		$("#slider-range").slider({
 		min: agg["income"]["min"],
 		max: agg["income"]["max"],
 		values: [agg["income"]["min"], agg["income"]["max"]],
+		});
+		$("#amount").text('Range: $' + agg["income"]["min"] + ',000 - $' + agg["income"]["max"] + ',000');
+	}
+	$("#num_homes").text(num_homes + " homes");
+	var respondents = agg['respondent_name'];
+	// Hack to sort associative array
+	var sortedArr = [];
+	for (name in respondents)
+	{
+		sortedArr.push([respondents[name], name]);
+	}
+	sortedArr.sort(function(a,b){
+		return b[0] - a[0];
 	});
-	$("#amount").text('Range: $' + agg["income"]["min"] + ',000 - $' + agg["income"]["max"] + ',000');
-	$("#num_homes").text(arr.length + " homes");
+	var $el = $('<ol></ol>');
+	for (var i = 0; i < Math.min(sortedArr.length, 6); i++)
+	{
+		$el.append($('<li>'+sortedArr[i][1].toLowerCase().capitalize() + ' (' + sortedArr[i][0] + ')</li>'));
+	}
+	$('#summary').children().remove();
+	$('#summary').append($el);
+	$('#summary').show();
 	return agg;
 }
 
@@ -212,6 +221,14 @@ $(function(){
 		slide: function(event, ui) {
 			$("#amount").text('Range: $' + ui.values[0] + ',000 - $' + ui.values[1] + ',000');
 		}
+	});
+	$( "#slider-range" ).bind( "slidestop", function(event, ui) {
+	  var values = $(this).slider("option", "values");
+	  var func = function(obj) { 
+		var val = parseInt(obj['income']);
+		return (values[0] <= val && val <= values[1]);
+	  };
+	  var newData = aggregateData(latest_data, func);
 	});
 	
 	var buildQuery = function(arr)
@@ -313,25 +330,8 @@ $(function(){
 						        data: {fields:"state,income", state:id},
 						        dataType: "jsonp",
 						        success: function(data, status){
+									latest_data = data;
 									var aggregates = aggregateData(data);
-									var respondents = aggregates['respondent_name'];
-									// Hack to sort associative array
-									var sortedArr = [];
-									for (name in respondents)
-									{
-										sortedArr.push([respondents[name], name]);
-									}
-									sortedArr.sort(function(a,b){
-										return b[0] - a[0];
-									});
-									var $el = $('<ol></ol>');
-									for (var i = 0; i < Math.min(sortedArr.length, 6); i++)
-									{
-										$el.append($('<li>'+sortedArr[i][1].toLowerCase().capitalize() + ' (' + sortedArr[i][0] + ')</li>'));
-									}
-									$('#summary').children().remove();
-									$('#summary').append($el);
-									$('#summary').show();
 								}
 						});
 					  })
