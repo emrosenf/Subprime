@@ -118,30 +118,34 @@ $(function(){
 		            if(typeof newdata[0].county != 'undefined') {
 		              isCounty = true;
 		            }
+					if(isCounty) {
+					  $('.stateClass').unbind('click');
+					  $('.stateClass').unbind('mouseover');
+					  $('.stateClass').unbind('mouseleave');
+					  $('.stateClass').css('fill', 'none');
+					}
+					else {
+					  $('.stateClass').click(function() {
+						$('#tooltip').html('CLICKED!');
+					  });
+					  $('.stateClass').mouseover(function() {
+						$('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
+						$('.' + $(this).attr('stateid')).css('fill', '#fff');
+					  });
+					  $('.stateClass').mouseleave(function() {
+						var oldcolor = $(this).attr('oldcolor');
+						$('.' + $(this).attr('stateid')).css('fill', oldcolor);
+					  });
+					}
 		            for(k = 0; k < newdata.length; k++) {
 		              if(((isCounty && newdata[k].county != "-1") || !isCounty) && newdata[k].state != "-1") {
 		                var idname = '';
 		                if(isCounty) {
 		                  idname = "county" + newdata[k].state + newdata[k].county;
-		                  $('.stateClass').unbind('click');
-		                  $('.stateClass').unbind('mouseover');
-		                  $('.stateClass').unbind('mouseleave');
-		                  $('.stateClass').css('fill', 'none');
 		                }
-		                else {
-		                  idname = "state" + newdata[k].state;
-						  $('.stateClass').click(function() {
-							$('#tooltip').html('CLICKED!');
-						  });
-						  $('.stateClass').mouseover(function() {
-							$('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
-							$('.' + $(this).attr('stateid')).css('fill', '#fff');
-						  });
-						  $('.stateClass').mouseleave(function() {
-							var oldcolor = $(this).attr('oldcolor');
-							$('.' + $(this).attr('stateid')).css('fill', oldcolor);
-						  });
-		                }
+						else {
+						  idname = "state" + newdata[k].state;
+						}
 		                var metric;
 		                
 		                if(metricType == 'rate_spread') {
