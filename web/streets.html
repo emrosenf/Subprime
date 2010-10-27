@@ -1,90 +1,49 @@
-<!--
-<html>
-  <head>
-    <title>San Francisco Street Pavement</title>
-    <script type="text/javascript" src="http://polymaps.org/protodata.min.js?3.2"></script>
-    <script type="text/javascript" src="http://polymaps.org/polymaps.min.js?2.2.0"></script>
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <link href="css/style.css" rel="stylesheet" type="text/css"/>
-  </head>
-  <body>
-    <div id="sidebar">
-      <div class="title">Subprime stuff</div>
-      <div class="subtitle">Ravi Parikh and Evan Rosenfeld</div>
-      <div id="tooltip">Click a region to interact</div>
-      <div class="filters_container">
-        <form name="filter_form" id="filter_form">
-          <div class="filter">
-            <div class="filter_title">Geography Aggregation</div>
-            <input type="radio" name="geo" value="county" checked />County<br/>
-            <input type="radio" name="geo" value="state" />State<br/>
-          </div>
-          <div class="filter">
-            <div class="filter_title">Metric</div>
-            <input type="radio" name="metric" value="rate_spread" checked />Rate spread<br/>
-            <input type="radio" name="metric" value="income" />Income<br/>
-            <input type="radio" name="metric" value="loan_amount" />Loan amount<br/>
-          </div>
-          <div class="filter_update">
-            <input type="submit" value="Update" />
-          </div>
-        </form>
-      </div>
-      <div id="temp_button" style="background-color: black; color: white; height: 100px; width: 100px; text-align: center; margin: auto; margin-top: 100px;">
-        <div style="padding-top: 35px">test update</div>
-      </div>
-    </div>
-    <div id="loading">
-      <div class="loading_inner">
-        Loading, please wait...<br/>
-        <img src="loading.gif" />
-      </div>
-    </div>
-    <div id="map">
-      <script type="text/javascript" src="streets.js"></script>
-    </div>
-  </body>
-</html>
--->
-
 <html>
   <head>
     <title>Population Density</title>
     <script type="text/javascript" src="http://polymaps.org/protodata.min.js?3.2"></script>
     <script type="text/javascript" src="http://polymaps.org/polymaps.min.js?2.2.0"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.tools.min.js"></script>
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
   </head>
   <body>
+	<div id="tooltip"><div class="tipHeader"></div><div class="tipBody"></div><div class="tipFooter"></div></div>
     <div id="sidebar">
-      <div class="title">Subprime stuff</div>
+      <div class="title">Exploring Home Mortgages</div>
       <div class="subtitle">Ravi Parikh and Evan Rosenfeld</div>
-      <div id="tooltip">Click a region to interact</div>
-      <div class="filters_container">
-        <form name="filter_form" id="filter_form">
+      <form name="filter_form" id="filter_form">
+		  <fieldset>
           <div class="filter">
-            <div class="filter_title">Geography Aggregation</div>
-            <input type="radio" name="geo" value="county" checked />County<br/>
-            <input type="radio" name="geo" value="state" />State<br/>
+            <div class="filter_title">Aggregate By</div>
+            <div class="field">
+				<input type="radio" name="geo" value="county" checked /><span>County</span>
+			</div>
+			<div class="field">
+            	<input type="radio" name="geo" value="state" /><span>State</span>
+			</div>
           </div>
           <div class="filter">
-            <div class="filter_title">Metric</div>
-            <input type="radio" name="metric" value="rate_spread" checked />Rate spread<br/>
-            <input type="radio" name="metric" value="income" />Income<br/>
-            <input type="radio" name="metric" value="loan_amount" />Loan amount<br/>
+            <div class="filter_title">Color By</div>
+			<div class="field">
+            	<input type="radio" name="metric" value="rate_spread" checked /><span>Rate spread</span>
+			</div>
+            <div class="field">
+				<input type="radio" name="metric" value="income" /><span>Income</span>
+			</div>
+            <div class="field">
+				<input type="radio" name="metric" value="loan_amount" /><span>Loan amount</span>
+			</div>
           </div>
-          <div class="filter_update">
-            <input type="submit" value="Update" />
-          </div>
-        </form>
-      </div>
-      <div id="temp_button" style="background-color: black; color: white; height: 100px; width: 100px; text-align: center; margin: auto; margin-top: 100px;">
-        <div style="padding-top: 35px">test update</div>
-      </div>
+		  </fieldset>
+       </form>
+	   <div id="summary" style="display:none;">
+			<h3>Top Lenders<h3>
+		</div>
     </div>
     <div id="loading">
       <div class="loading_inner">
-        Loading, please wait...<br/>
+        Updating Map . . .<br/>
         <img src="loading.gif" />
       </div>
     </div>

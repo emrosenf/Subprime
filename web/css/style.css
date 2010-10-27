@@ -34,19 +34,48 @@ body {
   margin: 10px;
   font-size: 20px;
   font-weight: bold;
+  text-align:center;
 }
 
 .subtitle {
   margin-bottom: 10px;
-  margin-left: 10px;
+  text-align: center;
   font-size: 12px;
+  border-bottom: 1px dotted #CCC;
 }
 
-#tooltip {
-  background-color: #48f;
-  margin: 10px;
-  padding: 10px;
-  height: 80px;
+#summary h3 { 
+	border-top: 1px dotted #CCC; 
+	padding: 15px 0 0 10px;
+}
+#summary ol li
+{
+	font-size:0.7em;
+}
+
+#tooltip {  
+    position:absolute;  
+    z-index:9999;  
+    color:#fff;  
+    font-size:10px;  
+    width:180px;  
+	display:none;
+      
+}  
+  
+#tooltip .tipHeader {  
+    height:8px;  
+    /*background:url(images/tipHeader.gif) no-repeat;  */
+}  
+  
+#tooltip .tipBody {  
+    background-color:#000;  
+    padding:5px;  
+}  
+  
+#tooltip .tipFooter {  
+    height:8px;  
+    /*background:url(images/tipFooter.gif) no-repeat; */ 
 }
 
 .filters_container {
@@ -59,7 +88,17 @@ body {
 
 .filter_title {
   font-weight: bold;
+  font-size:1.2em;
 }
+
+fieldset {
+	margin:5px;
+}
+.field {
+	padding-top: 10px;
+}
+
+.field span { margin-left: 5px;}
 
 #loading {
   position:absolute;
