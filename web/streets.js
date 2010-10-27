@@ -1,3 +1,15 @@
+function formatCurrency(num) {
+  num = num.toString().replace(/\$|\,/g,'');
+  if(isNaN(num))
+    num = "0";
+  sign = (num == (num = Math.abs(num)));
+  num = Math.floor(num*100+0.50000000001);
+  num = Math.floor(num/100).toString();
+  for (var i = 0; i < Math.floor((num.length-(1+i))/3); i++)
+    num = num.substring(0,num.length-(4*i+3))+','+num.substring(num.length-(4*i+3));
+  return (((sign)?'':'-') + '$' + num);
+}
+
 var state_dict = {'01':'Alabama', '02':'Alaska', '04':'Arizona', '05':'Arkansas', '06':'California', '08':'Colorado', '09':'Connecticut', '10':'Delaware', '12':'Florida', '13':'Georgia', '15':'Hawaii', '16':'Idaho', '17':'Illinois', '18':'Indiana', '19':'Iowa', '20':'Kansas', '21':'Kentucky', '22':'Louisiana', '23':'Maine', '24':'Maryland', '25':'Massachusetts', '26':'Michigan', '27':'Minnesota', '28':'Mississippi', '29':'Missouri', '30':'Montana', '31':'Nebraska', '32':'Nevada', '33':'New Hampshire', '34':'New Jersey', '35':'New Mexico', '36':'New York', '37':'North Carolina', '38':'North Dakota', '39':'Ohio', '40':'Oklahoma', '41':'Oregon', '42':'Pennsylvania', '44':'Rhode Island', '45':'South Carolina', '46':'South Dakota', '47':'Tennessee', '48':'Texas', '49':'Utah', '50':'Vermont', '51':'Virginia', '53':'Washington', '54':'West Virginia', '55':'Wisconsin', '56':'Wyoming', '72':'Puerto Rico'};
 var latest_data = {};
 String.prototype.capitalize = function(){
@@ -61,9 +73,11 @@ function loadState(e) {
 	  });
 	  $('#state' + counter).mouseover(function() {
 		var userFriendlyMetric = 'Rate Spread';
-		if(metricType == 'income') { userFriendlyMetric = 'Income'; }
-		if(metricType == 'loan_amount') { userFriendlyMetric = 'Loan Amount'; }
-		$('#tooltip').html(state_dict[$(this).attr('stateid').substr(-2)] + ' - ' + userFriendlyMetric + ': ' + $(this).attr('metric'));
+		var metricAmount = $(this).attr('metric');
+		if(metricType == 'rate_spread') { metricAmount += '%'; }
+		else if(metricType == 'income') { userFriendlyMetric = 'Income'; metricAmount *= 1000; metricAmount = formatCurrency(metricAmount); }
+		else if(metricType == 'loan_amount') { userFriendlyMetric = 'Loan Amount'; metricAmount *= 1000; metricAmount = formatCurrency(metricAmount); }
+		$('#tooltip').html(state_dict[$(this).attr('stateid').substr(-2)] + ' - ' + userFriendlyMetric + ': ' + metricAmount);
 		$('.' + $(this).attr('stateid')).css('fill', '#fff');
 	  });
 	  $('#state' + counter).mouseleave(function() {
@@ -107,10 +121,12 @@ function load(e) {
     })
     .mouseover(function() {
       var userFriendlyMetric = 'Rate Spread';
-      if(metricType == 'income') { userFriendlyMetric = 'Income'; }
-      if(metricType == 'loan_amount') { userFriendlyMetric = 'Loan Amount'; }
+      var metricAmount = $(this).attr('metric');
+      if(metricType == 'rate_spread') { metricAmount += '%'; }
+      else if(metricType == 'income') { userFriendlyMetric = 'Income'; metricAmount *= 1000; metricAmount = formatCurrency(metricAmount); }
+      else if(metricType == 'loan_amount') { userFriendlyMetric = 'Loan Amount'; metricAmount *= 1000; metricAmount = formatCurrency(metricAmount); }
 	  $('.tipHeader').text(state_dict[$(this).attr('countyid').substr(6,2)] + ", county " + $(this).attr('countyid').substr(-3));
-      $('.tipBody').text(userFriendlyMetric + ': ' + $(this).attr('metric'));
+      $('.tipBody').text(userFriendlyMetric + ': ' + metricAmount);
       //Set the X and Y axis of the tooltip  
       $('#tooltip').css('top', e.pageY + 10 );  
       $('#tooltip').css('left', e.pageX + 20 );  
@@ -182,7 +198,7 @@ var aggregateData = function(arr,func)
 		max: agg["income"]["max"],
 		values: [agg["income"]["min"], agg["income"]["max"]],
 		});
-		$("#amount").text('Range: $' + agg["income"]["min"] + ',000 - $' + agg["income"]["max"] + ',000');
+		$("#amount").text('Range: ' + formatCurrency(agg["income"]["min"]*1000) + ' - ' + formatCurrency(agg["income"]["max"]*1000));
 	}
 	$("#num_homes").text(num_homes + " homes");
 	var respondents = agg['respondent_name'];
@@ -219,7 +235,7 @@ $(function(){
 		max: 500,
 		values: [75, 300],
 		slide: function(event, ui) {
-			$("#amount").text('Range: $' + ui.values[0] + ',000 - $' + ui.values[1] + ',000');
+			$("#amount").text('Range: ' + formatCurrency(ui.values[0]*1000) + ' - ' + formatCurrency(ui.values[1]*1000));
 		}
 	});
 	$( "#slider-range" ).bind( "slidestop", function(event, ui) {
@@ -337,10 +353,12 @@ $(function(){
 					  })
 					  .mouseover(function(e) {
 					    var userFriendlyMetric = 'Rate Spread';
-					    if(metricType == 'income') { userFriendlyMetric = 'Income'; }
-					    if(metricType == 'loan_amount') { userFriendlyMetric = 'Loan Amount'; }
+					    var metricAmount = $(this).attr('metric');
+					    if(metricType == 'rate_spread') { metricAmount += '%'; }
+					    else if(metricType == 'income') { userFriendlyMetric = 'Income'; metricAmount *= 1000; metricAmount = formatCurrency(metricAmount); }
+					    else if(metricType == 'loan_amount') { userFriendlyMetric = 'Loan Amount'; metricAmount *= 1000; metricAmount = formatCurrency(metricAmount); }
 						$('.tipHeader').text(state_dict[$(this).attr('stateid').substr(-2)]);
-						$('.tipBody').text(userFriendlyMetric + ': ' + $(this).attr('metric'));
+						$('.tipBody').text(userFriendlyMetric + ': ' + metricAmount);
 				        //Set the X and Y axis of the tooltip  
 				        $('#tooltip').css('top', e.pageY + 10 );  
 				        $('#tooltip').css('left', e.pageX + 20 );  
