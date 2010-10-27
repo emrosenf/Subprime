@@ -4,8 +4,11 @@
     <script type="text/javascript" src="http://polymaps.org/protodata.min.js?3.2"></script>
     <script type="text/javascript" src="http://polymaps.org/polymaps.min.js?2.2.0"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
-	<script type="text/javascript" src="js/jquery.tools.min.js"></script>
-    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+	<script type="text/javascript" src="js/jqueryui.min.js"></script>
+    
+	<link href="css/jqueryui.css" rel="stylesheet" type="text/css"/>
+	<link href="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.css" rel="stylesheet" type="text/css"/>
+	<link href="css/style.css" rel="stylesheet" type="text/css"/>
   </head>
   <body>
 	<div id="tooltip"><div class="tipHeader"></div><div class="tipBody"></div><div class="tipFooter"></div></div>
@@ -13,7 +16,46 @@
       <div class="title">Exploring Home Mortgages</div>
       <div class="subtitle">Ravi Parikh and Evan Rosenfeld</div>
       <form name="filter_form" id="filter_form">
-		  <fieldset>
+		<ul class="ui-listview ui-listview-inset ui-corner-all ui-controlgroup ui-controlgroup-vertical ui-shadow">
+			<li class="ui-li ui-li-divider ui-btn ui-bar-b ui-corner-top">Settings</li>
+			<li class="ui-li ui-li-divider" style="border-bottom: 1px solid #456F9A;">
+				<div class="filter_title">Aggregate By</div>
+	            <div class="field">
+					<input type="radio" name="geo" value="county" checked /><span>County</span>
+				</div>
+				<div class="field">
+	            	<input type="radio" name="geo" value="state" /><span>State</span>
+				</div>
+			</li>
+			<li class="ui-li ui-li-divider ui-corner-bottom">
+	            <div class="filter_title">Color By</div>
+				<div class="field">
+	            	<input type="radio" name="metric" value="rate_spread" checked /><span>Rate spread</span>
+				</div>
+	            <div class="field">
+					<input type="radio" name="metric" value="income" /><span>Income</span>
+				</div>
+	            <div class="field">
+					<input type="radio" name="metric" value="loan_amount" /><span>Loan amount</span>
+				</div>
+			</li>
+		</ul>
+	</form>
+	<ul class="ui-listview ui-listview-inset ui-corner-all ui-controlgroup ui-controlgroup-vertical ui-shadow">
+		<li class="ui-li ui-li-divider ui-btn ui-bar-b ui-corner-top">Spotlight</li>
+		<li class="ui-li ui-li-divider" style="border-bottom: 1px solid #456F9A;">
+			<div class="filter_title">Filter By Income</div>
+			<div id="amount" style="border:0; color:#f6931f; font-weight:bold;"></div>
+			
+			<div id="slider-range"></div>
+		</li>
+		<li class="ui-li ui-li-divider ui-corner-bottom">
+            <div class="filter_title">Top Lenders</div>
+			<div id="summary" style="display:none;">
+			</div>
+		</li>
+	</ul>
+		  <!--<fieldset>
           <div class="filter">
             <div class="filter_title">Aggregate By</div>
             <div class="field">
@@ -35,12 +77,18 @@
 				<input type="radio" name="metric" value="loan_amount" /><span>Loan amount</span>
 			</div>
           </div>
-		  </fieldset>
-       </form>
-	   <div id="summary" style="display:none;">
-			<h3>Top Lenders<h3>
-		</div>
-    </div>
+		  </fieldset>-->
+       <!--</form>
+		<div style="border-top: 1px dotted #CCC">
+			<h3>Filter By Income</h3>
+			<div id="amount" style="border:0; color:#f6931f; font-weight:bold;"></div>
+
+			<div id="slider-range"></div>
+			<div id="summary" style="display:none;">
+				<h3>Top Lenders<h3>
+			</div>
+		</div>-->
+	</div>
     <div id="loading">
       <div class="loading_inner">
         Updating Map . . .<br/>

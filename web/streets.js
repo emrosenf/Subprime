@@ -55,7 +55,7 @@ function loadHandlers() {
 	
 	$.ajax({
 	        url: 'http://204.232.210.102:5011/query/lar',
-	        data: {fields:"state", state:id.substr(0,2), county:id.substr(2)},
+	        data: {fields:"state,income", state:id.substr(0,2), county:id.substr(2)},
 	        dataType: "jsonp",
 	        success: function(data, status){
 				var aggregates = aggregateData(data);
@@ -75,7 +75,6 @@ function loadHandlers() {
 					$el.append($('<li>'+sortedArr[i][1].toLowerCase().capitalize() + ' (' + sortedArr[i][0] + ')</li>'));
 				}
 				$('#summary').children().remove();
-				$('#summary').append($('<h3>Top Lenders</h3>'));
 				$('#summary').append($el);
 				$('#summary').show();
 			}
@@ -141,6 +140,18 @@ setTimeout("$('#loading').hide()", 3500);
 
 var newdata;
 $(function(){
+	
+	
+	$("#slider-range").slider({
+		range: true,
+		min: 0,
+		max: 500,
+		values: [75, 300],
+		slide: function(event, ui) {
+			$("#amount").val('$' + ui.values[0] + ' - $' + ui.values[1]);
+		}
+	});
+	$("#amount").val('$' + $("#slider-range").slider("values", 0) + ' - $' + $("#slider-range").slider("values", 1));
 	
 	var buildQuery = function(arr)
 	{
@@ -211,7 +222,7 @@ $(function(){
 
 						$.ajax({
 						        url: 'http://204.232.210.102:5011/query/lar',
-						        data: {fields:"state", state:id},
+						        data: {fields:"state,income", state:id},
 						        dataType: "jsonp",
 						        success: function(data, status){
 									var aggregates = aggregateData(data);
@@ -231,7 +242,6 @@ $(function(){
 										$el.append($('<li>'+sortedArr[i][1].toLowerCase().capitalize() + ' (' + sortedArr[i][0] + ')</li>'));
 									}
 									$('#summary').children().remove();
-									$('#summary').append($('<h3>Top Lenders</h3>'));
 									$('#summary').append($el);
 									$('#summary').show();
 								}
