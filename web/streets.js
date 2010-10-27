@@ -82,6 +82,41 @@ $(function(){
 		
 	};
 	
+	var aggregateData = function(arr)
+	{
+		var agg = {"income": {}, "loan_amount" : {}, "sex" : {}, "respondent_name" : {}, "rate_spread" : {}};
+		$.each(arr, function(index, obj) {
+			var val;
+			for (prop in obj)
+			{
+				if (typeof obj[prop] != 'undefined')
+				{
+					switch (prop)
+					{
+						case "rate_spread":
+							val = Math.floor(parseFloat(obj[prop]));
+							agg[prop][val] = (typeof agg[prop][val] == 'undefined') ? 1 : agg[prop][val]+1;
+							break;
+						case "loan_amount":
+						case "income":
+							val = parseInt(obj[prop])
+							break;
+						case "sex": 
+							val = parseInt(obj[prop]);
+							agg[prop][val] = (typeof agg[prop][val] == 'undefined') ? 1 : agg[prop][val]+1;
+							break;
+						case "respondent_name":
+							agg[prop][obj[prop]] = (typeof agg[prop][obj[prop]] == 'undefined') ? 1 : agg[prop][obj[prop]]+1;
+							break;
+						default:
+							break;
+					}
+				}
+			}
+		});
+		return agg;
+	}
+	
 	$("#filter_form").submit(function() {
 	    $('#loading').show();
 		var arr = {};
@@ -93,6 +128,7 @@ $(function(){
 		        data: buildQuery(arr),
 		        dataType: "jsonp",
 		        success: function(data, status){
+					aggregates = aggregateData(data);
 		            newdata = data;
 		            var k = 0;
 		            if(typeof newdata[0].rate_spread != 'undefined') {
