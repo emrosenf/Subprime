@@ -62,26 +62,12 @@ function load(e) {
 
 var newdata;
 $(function(){
-	var unserialize = function(qs)
-	{
-		var parms = qs.split('&');
-		var retVal = [];
-		for (var i=0; i<parms.length; i++) {
-			var pos = parms[i].indexOf('=');
-			if (pos > 0) {
-				var key = parms[i].substring(0,pos);
-				var val = parms[i].substring(pos+1);
-				retVal[key] = val;
-			}
-		}
-		return retVal;
-	};
 	
 	var buildQuery = function(arr)
 	{
-		query = {};
-		group_by = ['state'];
-		fields = ['state', 'avg('+arr['metric']+')'];
+		var query = {};
+		var group_by = ['state'];
+		var fields = ['state', 'avg('+arr['metric']+')'];
 		if (arr['geo'] == 'county')
 		{
 			fields.push('county');
@@ -94,7 +80,10 @@ $(function(){
 	
 	$("#filter_form").submit(function() {
 	    $('#loading').show();
-		var arr = unserialize($(this).serialize());
+		var arr = {};
+		$.each($(this).serializeArray(), function(index, data) {
+			arr[data.name] = data.value;
+		});
 		$.ajax({
 		        url: 'http://204.232.210.102:5011/query/lar',
 		        data: buildQuery(arr),
@@ -265,9 +254,9 @@ $(function(){
 	
 	var buildQuery = function(arr)
 	{
-		query = {};
-		group_by = ['state'];
-		fields = ['state', 'avg('+arr['metric']+')'];
+		var query = {};
+		var group_by = ['state'];
+		var fields = ['state', 'avg('+arr['metric']+')'];
 		if (arr['geo'] == 'county')
 		{
 			fields.push('county');
@@ -278,18 +267,35 @@ $(function(){
 		
 	};
 	
+	var aggregateData = function(arr)
+	{
+		var income = {};
+		var loan_amount = {};
+		var respondent_name = {};
+		$.each(arr, function(index, obj) {
+			if (respondent_name[obj.respondent_name])
+			{
+				respondent_name[obj.respondent_name]++;
+			}
+			else
+			{
+				respondent_name[obj.respondent_name] = 1;
+			}
+		});
+	}
+	
 	$("#filter_form").submit(function() {
 		var arr = {};
 		$.each($(this).serializeArray(), function(index, data) {
 			arr[data.name] = data.value;
 		});
-		//var arr = unserialize($(this).serialize());
+		
 		$.ajax({
 		        url: 'http://204.232.210.102:5011/query/lar',
 		        data: buildQuery(arr),
 		        dataType: "jsonp",
 		        success: function(data, status){
-		            // function here
+					aggregateData(data);
 		        }
 		    });
 		return false;
