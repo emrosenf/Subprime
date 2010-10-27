@@ -21,36 +21,42 @@ map.add(po.geoJson()
 
 map.add(po.geoJson()
     .url("http://polymaps.appspot.com/state/{Z}/{X}/{Y}.json")
+    .on("load", loadState)
     .id("state"));
     
 setTimeout("$('#loading').hide()", 500);
 
 var metricType = '';
 //var oldColor = 'white';
+function loadState(e) {
+  for (var i = 0; i < e.features.length; i++) {
+    var feature = e.features[i];
+    var tempid = "state" + feature.data.id.substr(6);
+    feature.element.setAttribute("class", "stateClass " + tempid);
+  }
+}
+
 function load(e) {
   for (var i = 0; i < e.features.length; i++) {
     var feature = e.features[i];
     var tempid = "county" + feature.data.id.substr(7);
-    if($('#' + tempid).length == 0) {
-      feature.element.setAttribute("id", tempid);
-    }
-    else {
-      feature.element.setAttribute("id", tempid + 'a');
-    }
-    feature.element.setAttribute("class", "countyClass");
+    feature.element.setAttribute("class", "countyClass " + tempid);
+    feature.element.setAttribute("countyid", tempid);
     feature.element.setAttribute("style", "fill: #555");
   }
+  
+  
   $('.countyClass').attr('oldcolor', '#555');
   $('.countyClass').click(function() {
     $('#tooltip').html('CLICKED!');
   });
   $('.countyClass').mouseover(function() {
-    //oldColor = $(this).css('fill');
-    $(this).css('fill', '#fff');
     $('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
+    $('.' + $(this).attr('countyid')).css('fill', '#fff');
   });
   $('.countyClass').mouseleave(function() {
-    $(this).css('fill', $(this).attr('oldcolor'));
+    var oldcolor = $(this).attr('oldcolor');
+    $('.' + $(this).attr('countyid')).css('fill', oldcolor);
   });
 }
 
@@ -119,9 +125,19 @@ $(function(){
 		              min = 50;
 		              interval = 20;
 		            }
+		            var isCounty = false;
+		            if(typeof newdata[0].county != 'undefined') {
+		              isCounty = true;
+		            }
 		            for(k = 0; k < newdata.length; k++) {
-		              if(newdata[k].county != "-1" && newdata[k].state != "-1") {
-		                var idname = "county" + newdata[k].state + newdata[k].county;
+		              if(((isCounty && newdata[k].county != "-1") || !isCounty) && newdata[k].state != "-1") {
+		                var idname = '';
+		                if(isCounty) {
+		                  idname = "county" + newdata[k].state + newdata[k].county;
+		                }
+		                else {
+		                  idname = "state" + newdata[k].state;
+		                }
 		                var metric;
 		                
 		                if(metricType == 'rate_spread') {
@@ -135,7 +151,7 @@ $(function(){
 		                }
 		                
 		                
-		                $('#' + idname).attr('metric', metric); 
+		                $('.' + idname).attr('metric', metric); 
 		                
 		                var fillval;
 		                if(metric < min) {
@@ -156,12 +172,8 @@ $(function(){
 		                else {
 		                  fillval = '#58f';
 		                }
-		                $('#' + idname).css('fill', fillval);
-		                $('#' + idname).attr('oldcolor', fillval);
-		                if($('#' + idname + 'a').length != 0) {
-		                  $('#' + idname + 'a').css('fill', fillval);
-		                  $('#' + idname + 'a').attr('oldcolor', fillval);
-		                }
+		                $('.' + idname).css('fill', fillval);
+		                $('.' + idname).attr('oldcolor', fillval);
 		              }
 		            }
 		            $('#loading').hide();
