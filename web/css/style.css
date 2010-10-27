@@ -84,8 +84,9 @@ body {
     position:absolute;  
     z-index:9999;  
     color:#fff;  
-    font-size:10px;  
-    width:180px;  
+    font-size:10px;
+    min-width:180px;
+    max-width:215px;  
 	display:none;
 	background-color:#000;
       
