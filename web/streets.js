@@ -123,10 +123,10 @@ $(function(){
 		                var idname = '';
 		                if(isCounty) {
 		                  idname = "county" + newdata[k].state + newdata[k].county;
-		                  $('.stateClass').unbind('click');
+		                  /*$('.stateClass').unbind('click');
 		                  $('.stateClass').unbind('mouseover');
 		                  $('.stateClass').unbind('mouseleave');
-		                  $('.stateClass').css('fill', 'none');
+		                  $('.stateClass').css('fill', 'none');*/
 		                }
 		                else {
 		                  idname = "state" + newdata[k].state;
