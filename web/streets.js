@@ -49,7 +49,34 @@ function load(e) {
 function loadHandlers() {
   $('.countyClass').attr('oldcolor', '#555');
   $('.countyClass').click(function() {
-	$('#tooltip').html('CLICKED!');
+    $('#tooltip').html('CLICKED!');
+	var id = $(this).attr('countyid').substr(-5);
+	
+	$.ajax({
+	        url: 'http://204.232.210.102:5011/query/lar',
+	        data: {fields:"state", state:id.substr(0,2), county:id.substr(2)},
+	        dataType: "jsonp",
+	        success: function(data, status){
+				var aggregates = aggregateData(data);
+				var respondents = aggregates['respondent_name'];
+				// Hack to sort associative array
+				var sortedArr = [];
+				for (name in respondents)
+				{
+					sortedArr.push([respondents[name], name]);
+				}
+				sortedArr.sort(function(a,b){
+					return b[0] - a[0];
+				});
+				var $el = $('<div class="filter" id="summary"></div>').append($('<ul></ul>'));
+				for (var i = 0; i < Math.min(sortedArr.length, 6); i++)
+				{
+					$el.append($('<li>'+sortedArr[i][1] + ' -- ' + sortedArr[i][0] + '</li>'));
+				}
+				$('#summary').remove();
+				$el.insertAfter('.filter_update');
+			}
+	});
   });
   $('.countyClass').mouseover(function() {
 	$('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
@@ -59,6 +86,41 @@ function loadHandlers() {
 	var oldcolor = $(this).attr('oldcolor');
 	$('.' + $(this).attr('countyid')).css('fill', oldcolor);
   });
+}
+
+var aggregateData = function(arr)
+{
+	var agg = {"income": {}, "loan_amount" : {}, "sex" : {}, "respondent_name" : {}, "rate_spread" : {}};
+	$.each(arr, function(index, obj) {
+		var val;
+		for (prop in obj)
+		{
+			if (typeof obj[prop] != 'undefined')
+			{
+				switch (prop)
+				{
+					case "rate_spread":
+						val = Math.floor(parseFloat(obj[prop]));
+						agg[prop][val] = (typeof agg[prop][val] == 'undefined') ? 1 : agg[prop][val]+1;
+						break;
+					case "loan_amount":
+					case "income":
+						val = parseInt(obj[prop])
+						break;
+					case "sex": 
+						val = parseInt(obj[prop]);
+						agg[prop][val] = (typeof agg[prop][val] == 'undefined') ? 1 : agg[prop][val]+1;
+						break;
+					case "respondent_name":
+						agg[prop][obj[prop]] = (typeof agg[prop][obj[prop]] == 'undefined') ? 1 : agg[prop][obj[prop]]+1;
+						break;
+					default:
+						break;
+				}
+			}
+		}
+	});
+	return agg;
 }
 
 setTimeout("loadHandlers()", 3500);
@@ -81,41 +143,7 @@ $(function(){
 		return query;
 		
 	};
-	
-	var aggregateData = function(arr)
-	{
-		var agg = {"income": {}, "loan_amount" : {}, "sex" : {}, "respondent_name" : {}, "rate_spread" : {}};
-		$.each(arr, function(index, obj) {
-			var val;
-			for (prop in obj)
-			{
-				if (typeof obj[prop] != 'undefined')
-				{
-					switch (prop)
-					{
-						case "rate_spread":
-							val = Math.floor(parseFloat(obj[prop]));
-							agg[prop][val] = (typeof agg[prop][val] == 'undefined') ? 1 : agg[prop][val]+1;
-							break;
-						case "loan_amount":
-						case "income":
-							val = parseInt(obj[prop])
-							break;
-						case "sex": 
-							val = parseInt(obj[prop]);
-							agg[prop][val] = (typeof agg[prop][val] == 'undefined') ? 1 : agg[prop][val]+1;
-							break;
-						case "respondent_name":
-							agg[prop][obj[prop]] = (typeof agg[prop][obj[prop]] == 'undefined') ? 1 : agg[prop][obj[prop]]+1;
-							break;
-						default:
-							break;
-					}
-				}
-			}
-		});
-		return agg;
-	}
+
 	
 	$("#filter_form").submit(function() {
 	    $('#loading').show();
