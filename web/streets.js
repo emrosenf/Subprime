@@ -1,6 +1,7 @@
 String.prototype.capitalize = function(){
    return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
   };
+
 var po = org.polymaps;
 
 var map = po.map()
@@ -118,13 +119,17 @@ var aggregateData = function(arr)
 					case "loan_amount":
 					case "income":
 						val = parseInt(obj[prop])
+						agg[prop]["max"] = (typeof agg[prop]["max"] == 'undefined') ? val : Math.max(val, agg[prop]["max"]);
+						if (val != -1)
+							agg[prop]["min"] = (typeof agg[prop]["min"] == 'undefined') ? val : Math.min(val, agg[prop]["min"]);
 						break;
 					case "sex": 
 						val = parseInt(obj[prop]);
 						agg[prop][val] = (typeof agg[prop][val] == 'undefined') ? 1 : agg[prop][val]+1;
 						break;
 					case "respondent_name":
-						agg[prop][obj[prop]] = (typeof agg[prop][obj[prop]] == 'undefined') ? 1 : agg[prop][obj[prop]]+1;
+						if (obj[prop] != "-1")
+							agg[prop][obj[prop]] = (typeof agg[prop][obj[prop]] == 'undefined') ? 1 : agg[prop][obj[prop]]+1;
 						break;
 					default:
 						break;
@@ -132,6 +137,13 @@ var aggregateData = function(arr)
 			}
 		}
 	});
+	$("#slider-range").slider({
+		min: agg["income"]["min"],
+		max: agg["income"]["max"],
+		values: [agg["income"]["min"], agg["income"]["max"]],
+	});
+	$("#amount").text('Range: $' + agg["income"]["min"] + ',000 - $' + agg["income"]["max"] + ',000');
+	$("#num_homes").text(arr.length + " homes");
 	return agg;
 }
 
@@ -148,10 +160,9 @@ $(function(){
 		max: 500,
 		values: [75, 300],
 		slide: function(event, ui) {
-			$("#amount").val('$' + ui.values[0] + ' - $' + ui.values[1]);
+			$("#amount").text('Range: $' + ui.values[0] + ',000 - $' + ui.values[1] + ',000');
 		}
 	});
-	$("#amount").val('$' + $("#slider-range").slider("values", 0) + ' - $' + $("#slider-range").slider("values", 1));
 	
 	var buildQuery = function(arr)
 	{

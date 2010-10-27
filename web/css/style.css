@@ -30,6 +30,8 @@ body {
   height: 100%;
 }
 
+#sidebar ul { margin: 5px;}
+
 .title {
   margin: 10px;
   font-size: 20px;
