@@ -1,4 +1,6 @@
-
+String.prototype.capitalize = function(){
+   return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
+  };
 var po = org.polymaps;
 
 var map = po.map()
@@ -9,9 +11,9 @@ var map = po.map()
     .add(po.interact());
 
 map.add(po.image()
-    .url(po.url("http://{S}tile.cloudmade.com"
+	.url(po.url("http://{S}tile.cloudmade.com"
     + "/1a1b06b230af4efdbb989ea99e9841af" // http://cloudmade.com/register
-    + "/999/256/{Z}/{X}/{Y}.png")
+    + "/998/256/{Z}/{X}/{Y}.png")
     .hosts(["a.", "b.", "c.", ""])));
 
 map.add(po.geoJson()
@@ -37,7 +39,6 @@ function loadState(e) {
 }
 
 function load(e) {
-  alert('awef');
   for (var i = 0; i < e.features.length; i++) {
 	var feature = e.features[i];
 	var tempid = "county" + feature.data.id.substr(7);
@@ -69,13 +70,15 @@ function loadHandlers() {
 				sortedArr.sort(function(a,b){
 					return b[0] - a[0];
 				});
-				var $el = $('<div class="filter" id="summary"></div>').append($('<ul></ul>'));
+				var $el = $('<ol></ol>');
 				for (var i = 0; i < Math.min(sortedArr.length, 6); i++)
 				{
-					$el.append($('<li>'+sortedArr[i][1] + ' -- ' + sortedArr[i][0] + '</li>'));
+					$el.append($('<li>'+sortedArr[i][1].toLowerCase().capitalize() + ' (' + sortedArr[i][0] + ')</li>'));
 				}
-				$('#summary').remove();
-				$el.insertAfter('.filter_update');
+				$('#summary').children().remove();
+				$('#summary').append($('<h3>Top Lenders</h3>'));
+				$('#summary').append($el);
+				$('#summary').show();
 			}
 	});
   });
@@ -146,10 +149,10 @@ $(function(){
 	};
 
 	
-	$("#filter_form").submit(function() {
+	$("#filter_form input").change(function() {
 	    $('#loading').show();
 		var arr = {};
-		$.each($(this).serializeArray(), function(index, data) {
+		$.each($("#filter_form").serializeArray(), function(index, data) {
 			arr[data.name] = data.value;
 		});
 		$.ajax({
@@ -196,15 +199,34 @@ $(function(){
 					else {
 					  $('.stateClass').click(function() {
 						$('#tooltip').html('CLICKED!');
-					  });
-					  $('.stateClass').mouseover(function() {
-						$('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
+					  })
+					  .mouseover(function(e) {
+						$('.tipBody').text(metricType + ': ' + $(this).attr('metric'));
+						        //Set the X and Y axis of the tooltip  
+						        $('#tooltip').css('top', e.pageY + 10 );  
+						        $('#tooltip').css('left', e.pageX + 20 );  
+
+						        //Show the tooltip with faceIn effect  
+						        //$('#tooltip').fadeIn('500');  
+						        //$('#tooltip').fadeTo('10',0.8);  
+								$('#tooltip').show();
+						  
+						//$('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
 						$('.' + $(this).attr('stateid')).css('fill', '#fff');
-					  });
-					  $('.stateClass').mouseleave(function() {
+					  })
+					  .mouseleave(function() {
 						var oldcolor = $(this).attr('oldcolor');
 						$('.' + $(this).attr('stateid')).css('fill', oldcolor);
-					  });
+						//Remove the appended tooltip template  
+						$('#tooltip').hide();
+					  })
+					  .mousemove(function(e) {  
+
+					        //Keep changing the X and Y axis for the tooltip, thus, the tooltip move along with the mouse  
+					        $('#tooltip').css('top', e.pageY + 10 );  
+					        $('#tooltip').css('left', e.pageX + 20 );  
+
+					    })
 					}
 		            for(k = 0; k < newdata.length; k++) {
 		              if(((isCounty && newdata[k].county != "-1") || !isCounty) && newdata[k].state != "-1") {
