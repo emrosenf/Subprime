@@ -19,6 +19,7 @@ map.add(po.geoJson()
     .on("load", load)
     .id("county"));
 
+
 map.add(po.geoJson()
     .url("http://polymaps.appspot.com/state/{Z}/{X}/{Y}.json")
     .on("load", loadState)
@@ -27,12 +28,12 @@ map.add(po.geoJson()
 setTimeout("$('#loading').hide()", 500);
 
 var metricType = '';
-//var oldColor = 'white';
 function loadState(e) {
   for (var i = 0; i < e.features.length; i++) {
     var feature = e.features[i];
     var tempid = "state" + feature.data.id.substr(6);
     feature.element.setAttribute("class", "stateClass " + tempid);
+    feature.element.setAttribute("stateid", tempid);
   }
 }
 
@@ -44,7 +45,6 @@ function load(e) {
     feature.element.setAttribute("countyid", tempid);
     feature.element.setAttribute("style", "fill: #555");
   }
-  
   
   $('.countyClass').attr('oldcolor', '#555');
   $('.countyClass').click(function() {
@@ -123,9 +123,24 @@ $(function(){
 		                var idname = '';
 		                if(isCounty) {
 		                  idname = "county" + newdata[k].state + newdata[k].county;
+		                  $('.stateClass').unbind('click');
+		                  $('.stateClass').unbind('mouseover');
+		                  $('.stateClass').unbind('mouseleave');
+		                  $('.stateClass').css('fill', 'none');
 		                }
 		                else {
 		                  idname = "state" + newdata[k].state;
+						  $('.stateClass').click(function() {
+							$('#tooltip').html('CLICKED!');
+						  });
+						  $('.stateClass').mouseover(function() {
+							$('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
+							$('.' + $(this).attr('stateid')).css('fill', '#fff');
+						  });
+						  $('.stateClass').mouseleave(function() {
+							var oldcolor = $(this).attr('oldcolor');
+							$('.' + $(this).attr('stateid')).css('fill', oldcolor);
+						  });
 		                }
 		                var metric;
 		                
