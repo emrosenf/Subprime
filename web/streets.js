@@ -5,7 +5,7 @@ var map = po.map()
     .container(document.getElementById("map").appendChild(po.svg("svg")))
     .center({lat: 39, lon: -96})
     .zoom(4)
-    .zoomRange([3.51, 4.49])
+    .zoomRange([3.51, 6])
     .add(po.interact());
 
 map.add(po.image()
@@ -27,6 +27,9 @@ map.add(po.geoJson()
     
 
 var metricType = '';
+var counter = 0;
+var fillColors = new Array();
+
 function loadState(e) {
   for (var i = 0; i < e.features.length; i++) {
 	var feature = e.features[i];
@@ -37,17 +40,36 @@ function loadState(e) {
 }
 
 function load(e) {
-  alert('awef');
+  //alert('awef');
   for (var i = 0; i < e.features.length; i++) {
 	var feature = e.features[i];
 	var tempid = "county" + feature.data.id.substr(7);
 	feature.element.setAttribute("class", "countyClass " + tempid);
 	feature.element.setAttribute("countyid", tempid);
-	feature.element.setAttribute("style", "fill: #555");
+	if(typeof fillColors[tempid] == 'undefined') {
+	  fillColors[tempid] = '#555';
+	}
+	feature.element.setAttribute("style", "fill: " + fillColors[tempid]);
+	
+	counter++;
+	feature.element.setAttribute("id", "county" + counter);
+	$('#county' + counter).attr('oldcolor', fillColors[tempid]);
+    $('#county' + counter).click(function() {
+      $('#tooltip').html('CLICKED!');
+    });
+    $('#county' + counter).mouseover(function() {
+      $('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
+      $('.' + $(this).attr('countyid')).css('fill', '#fff');
+    });
+    $('#county' + counter).mouseleave(function() {
+      var oldcolor = $(this).attr('oldcolor');
+      $('.' + $(this).attr('countyid')).css('fill', oldcolor);
+    });
   }
 }
 
 function loadHandlers() {
+  /*
   $('.countyClass').attr('oldcolor', '#555');
   $('.countyClass').click(function() {
 	$('#tooltip').html('CLICKED!');
@@ -60,6 +82,7 @@ function loadHandlers() {
 	var oldcolor = $(this).attr('oldcolor');
 	$('.' + $(this).attr('countyid')).css('fill', oldcolor);
   });
+  */
 }
 
 setTimeout("loadHandlers()", 3500);
@@ -222,6 +245,7 @@ $(function(){
 		                }
 		                $('.' + idname).css('fill', fillval);
 		                $('.' + idname).attr('oldcolor', fillval);
+		                fillColors[idname] = fillval;
 		              }
 		            }
 		            $('#loading').hide();
