@@ -5,7 +5,7 @@ var map = po.map()
     .container(document.getElementById("map").appendChild(po.svg("svg")))
     .center({lat: 39, lon: -96})
     .zoom(4)
-    .zoomRange([4, 6])
+    .zoomRange([3.51, 4.49])
     .add(po.interact());
 
 map.add(po.image()
@@ -37,6 +37,7 @@ function loadState(e) {
 }
 
 function load(e) {
+  alert('awef');
   for (var i = 0; i < e.features.length; i++) {
 	var feature = e.features[i];
 	var tempid = "county" + feature.data.id.substr(7);
