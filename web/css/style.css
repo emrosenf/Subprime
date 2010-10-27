@@ -30,6 +30,8 @@ body {
   height: 100%;
 }
 
+#sidebar ul { margin: 5px;}
+
 .title {
   margin: 10px;
   font-size: 20px;
@@ -45,8 +47,6 @@ body {
 }
 
 #summary h3 { 
-	border-top: 1px dotted #CCC; 
-	padding: 15px 0 0 10px;
 }
 #summary ol li
 {
@@ -115,11 +115,15 @@ fieldset {
   padding-top: 200px;
 }
 
-
+.ui-slider-horizontal .ui-slider-handle
+{
+	top:0.8em;
+}
 
 body {
   background: #E6E6E6;
 }
+
 
 .layer path {
   fill: none;
