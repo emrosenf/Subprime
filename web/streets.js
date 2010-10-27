@@ -60,7 +60,10 @@ function loadState(e) {
 		$('#tooltip').html('CLICKED!');
 	  });
 	  $('#state' + counter).mouseover(function() {
-		$('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
+		var userFriendlyMetric = 'Rate Spread';
+		if(metricType == 'income') { userFriendlyMetric = 'Income'; }
+		if(metricType == 'loan_amount') { userFriendlyMetric = 'Loan Amount'; }
+		$('#tooltip').html(state_dict[$(this).attr('stateid').substr(-2)] + ' - ' + userFriendlyMetric + ': ' + $(this).attr('metric'));
 		$('.' + $(this).attr('stateid')).css('fill', '#fff');
 	  });
 	  $('#state' + counter).mouseleave(function() {
@@ -93,7 +96,10 @@ function load(e) {
       $('#tooltip').html('CLICKED!');
     });
     $('#county' + counter).mouseover(function() {
-      $('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
+      var userFriendlyMetric = 'Rate Spread';
+      if(metricType == 'income') { userFriendlyMetric = 'Income'; }
+      if(metricType == 'loan_amount') { userFriendlyMetric = 'Loan Amount'; }
+      $('#tooltip').html(userFriendlyMetric + ': ' + $(this).attr('metric'));
       $('.' + $(this).attr('countyid')).css('fill', '#fff');
     });
     $('#county' + counter).mouseleave(function() {
