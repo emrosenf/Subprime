@@ -29,6 +29,7 @@ map.add(po.geoJson()
 var metricType = '';
 var counter = 0;
 var fillColors = new Array();
+var metricArray = new Array();
 
 function loadState(e) {
   for (var i = 0; i < e.features.length; i++) {
@@ -36,11 +37,36 @@ function loadState(e) {
 	var tempid = "state" + feature.data.id.substr(6);
 	feature.element.setAttribute("class", "stateClass " + tempid);
 	feature.element.setAttribute("stateid", tempid);
+	
+	counter++;
+	feature.element.setAttribute("id", "state" + counter);
+	if(typeof fillColors[tempid] == 'undefined') {
+	  fillColors[tempid] = 'none';
+	}
+	if(fillColors[tempid] != 'none') {
+	  if(typeof metricArray[tempid] == 'undefined') {
+	    metricArray[tempid] = 'N/A';
+      }
+	  feature.element.setAttribute("style", "fill: " + fillColors[tempid]);
+      $('#state' + counter).attr('oldcolor', fillColors[tempid]);
+      $('#state' + counter).attr('metric', metricArray[tempid]);
+	  $('#state' + counter).click(function() {
+	    alert('click');
+		$('#tooltip').html('CLICKED!');
+	  });
+	  $('#state' + counter).mouseover(function() {
+		$('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
+		$('.' + $(this).attr('stateid')).css('fill', '#fff');
+	  });
+	  $('#state' + counter).mouseleave(function() {
+		var oldcolor = $(this).attr('oldcolor');
+		$('.' + $(this).attr('stateid')).css('fill', oldcolor);
+	  });
+	}
   }
 }
 
 function load(e) {
-  //alert('awef');
   for (var i = 0; i < e.features.length; i++) {
 	var feature = e.features[i];
 	var tempid = "county" + feature.data.id.substr(7);
@@ -50,10 +76,14 @@ function load(e) {
 	  fillColors[tempid] = '#555';
 	}
 	feature.element.setAttribute("style", "fill: " + fillColors[tempid]);
+	if(typeof metricArray[tempid] == 'undefined') {
+	  metricArray[tempid] = 'N/A';
+	}
 	
 	counter++;
 	feature.element.setAttribute("id", "county" + counter);
 	$('#county' + counter).attr('oldcolor', fillColors[tempid]);
+	$('#county' + counter).attr('metric', metricArray[tempid]);
     $('#county' + counter).click(function() {
       $('#tooltip').html('CLICKED!');
     });
@@ -187,6 +217,15 @@ $(function(){
 					  $('.stateClass').unbind('mouseover');
 					  $('.stateClass').unbind('mouseleave');
 					  $('.stateClass').css('fill', 'none');
+					  $('.stateClass').attr('oldcolor', 'none');
+					  for(i = 0; i < 100; i++) {
+					    if(i < 10) {
+					      fillColors['state0' + i] = 'none';
+					    }
+					    else {
+					      fillColors['state' + i] = 'none';
+					    }
+					  }
 					}
 					else {
 					  $('.stateClass').click(function() {
@@ -246,6 +285,7 @@ $(function(){
 		                $('.' + idname).css('fill', fillval);
 		                $('.' + idname).attr('oldcolor', fillval);
 		                fillColors[idname] = fillval;
+		                metricArray[idname] = metric;
 		              }
 		            }
 		            $('#loading').hide();
