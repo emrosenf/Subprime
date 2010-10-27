@@ -5,6 +5,37 @@ body {
   font-family: 'Lucida Grande', Arial;
 }
 
+.legend {
+  position: absolute;
+  width: 18%;
+  height: 350px;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: white;
+  margin-left: 80%;
+}
+
+.legend_title {
+  font-weight: bold;
+}
+
+.legend_individual {
+  margin-top: 10px;
+}
+
+.legend_tile {
+  width: 20px;
+  height: 20px;
+  background-color: #444;
+  float: left;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.legend_name {
+  float: left;
+}
+
 .compass .back {
   fill: #256574;
 }
