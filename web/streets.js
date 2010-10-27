@@ -5,7 +5,7 @@ var map = po.map()
     .container(document.getElementById("map").appendChild(po.svg("svg")))
     .center({lat: 39, lon: -96})
     .zoom(4)
-    .zoomRange([3, 7])
+    .zoomRange([4, 6])
     .add(po.interact());
 
 map.add(po.image()
@@ -25,40 +25,44 @@ map.add(po.geoJson()
     .on("load", loadState)
     .id("state"));
     
-setTimeout("$('#loading').hide()", 500);
 
 var metricType = '';
 function loadState(e) {
   for (var i = 0; i < e.features.length; i++) {
-    var feature = e.features[i];
-    var tempid = "state" + feature.data.id.substr(6);
-    feature.element.setAttribute("class", "stateClass " + tempid);
-    feature.element.setAttribute("stateid", tempid);
+	var feature = e.features[i];
+	var tempid = "state" + feature.data.id.substr(6);
+	feature.element.setAttribute("class", "stateClass " + tempid);
+	feature.element.setAttribute("stateid", tempid);
   }
 }
 
 function load(e) {
   for (var i = 0; i < e.features.length; i++) {
-    var feature = e.features[i];
-    var tempid = "county" + feature.data.id.substr(7);
-    feature.element.setAttribute("class", "countyClass " + tempid);
-    feature.element.setAttribute("countyid", tempid);
-    feature.element.setAttribute("style", "fill: #555");
+	var feature = e.features[i];
+	var tempid = "county" + feature.data.id.substr(7);
+	feature.element.setAttribute("class", "countyClass " + tempid);
+	feature.element.setAttribute("countyid", tempid);
+	feature.element.setAttribute("style", "fill: #555");
   }
-  
+}
+
+function loadHandlers() {
   $('.countyClass').attr('oldcolor', '#555');
   $('.countyClass').click(function() {
-    $('#tooltip').html('CLICKED!');
+	$('#tooltip').html('CLICKED!');
   });
   $('.countyClass').mouseover(function() {
-    $('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
-    $('.' + $(this).attr('countyid')).css('fill', '#fff');
+	$('#tooltip').html(metricType + ': ' + $(this).attr('metric'));
+	$('.' + $(this).attr('countyid')).css('fill', '#fff');
   });
   $('.countyClass').mouseleave(function() {
-    var oldcolor = $(this).attr('oldcolor');
-    $('.' + $(this).attr('countyid')).css('fill', oldcolor);
+	var oldcolor = $(this).attr('oldcolor');
+	$('.' + $(this).attr('countyid')).css('fill', oldcolor);
   });
 }
+
+setTimeout("loadHandlers()", 3500);
+setTimeout("$('#loading').hide()", 3500);
 
 var newdata;
 $(function(){
@@ -158,10 +162,9 @@ $(function(){
 		                  metric = newdata[k].loan_amount;
 		                }
 		                
-		                
 		                $('.' + idname).attr('metric', metric); 
 		                
-		                var fillval;
+		                var fillval = '#005';
 		                if(metric < min) {
 		                  fillval = '#005';
 		                }
