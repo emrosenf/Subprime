@@ -108,7 +108,10 @@ function load(e) {
 	$('#county' + counter).attr('metric', metricArray[tempid]);
     $('#county' + counter).click(function() {
 	    var id = $(this).attr('countyid').substr(-5);
-
+	    $('#region_name').html(state_dict[$(this).attr('countyid').substr(6,2)] + ", county " + $(this).attr('countyid').substr(-3));
+	    $('#summary').html('<img src="loading.gif" />');
+	    $('#amount').html('');
+	    $('#num_homes').html('');
 		$.ajax({
 		        url: 'http://204.232.210.102:5011/query/lar',
 		        data: {fields:"state,income", state:id.substr(0,2), county:id.substr(2)},
@@ -341,6 +344,11 @@ $(function(){
 					  $('.stateClass').click(function() {
 					    
 						var id = $(this).attr('stateid').substr(-2);
+						//$('#spotlight_title').html('Spotlight: ' + state_dict[$(this).attr('stateid').substr(-2)]);
+						$('#region_name').html(state_dict[$(this).attr('stateid').substr(-2)]);
+						$('#summary').html('<img src="loading.gif" />');
+						$('#amount').html('');
+						$('#num_homes').html('');
 						$.ajax({
 						        url: 'http://204.232.210.102:5011/query/lar',
 						        data: {fields:"state,income", state:id},
