@@ -15,6 +15,21 @@
     <div id="sidebar">
       <div class="title">Exploring Home Mortgages</div>
       <div class="subtitle">Ravi Parikh and Evan Rosenfeld</div>
+	<ul class="ui-listview ui-listview-inset ui-corner-all ui-controlgroup ui-controlgroup-vertical ui-shadow">
+		<li class="ui-li ui-li-divider ui-btn ui-bar-b ui-corner-top" id="spotlight_title">Spotlight</li>
+		<li class="ui-li ui-li-divider" style="border-bottom: 1px solid #456F9A;">
+			<div id="region_name">(none selected)</div>
+			<div class="filter_title">Filter By Income</div>
+			<div id="amount" style="border:0; color:#f6931f; font-weight:bold;"></div>
+			<div id="num_homes" style="border:0; color:#f6931f; font-weight:bold;"></div>
+			<div id="slider-range"></div>
+		</li>
+		<li class="ui-li ui-li-divider ui-corner-bottom">
+            <div class="filter_title">Top Lenders</div>
+			<div id="summary" style="display:none;">
+			</div>
+		</li>
+	</ul>
       <form name="filter_form" id="filter_form">
 		<ul class="ui-listview ui-listview-inset ui-corner-all ui-controlgroup ui-controlgroup-vertical ui-shadow">
 			<li class="ui-li ui-li-divider ui-btn ui-bar-b ui-corner-top">Settings</li>
@@ -41,21 +56,6 @@
 			</li>
 		</ul>
 	</form>
-	<ul class="ui-listview ui-listview-inset ui-corner-all ui-controlgroup ui-controlgroup-vertical ui-shadow">
-		<li class="ui-li ui-li-divider ui-btn ui-bar-b ui-corner-top" id="spotlight_title">Spotlight</li>
-		<li class="ui-li ui-li-divider" style="border-bottom: 1px solid #456F9A;">
-			<div id="region_name">(none selected)</div>
-			<div class="filter_title">Filter By Income</div>
-			<div id="amount" style="border:0; color:#f6931f; font-weight:bold;"></div>
-			<div id="num_homes" style="border:0; color:#f6931f; font-weight:bold;"></div>
-			<div id="slider-range"></div>
-		</li>
-		<li class="ui-li ui-li-divider ui-corner-bottom">
-            <div class="filter_title">Top Lenders</div>
-			<div id="summary" style="display:none;">
-			</div>
-		</li>
-	</ul>
 	</div>
 	<ul class="legend ui-listview ui-listview-inset ui-corner-all ui-controlgroup ui-controlgroup-vertical ui-shadow">
 		<li class="ui-li ui-li-divider ui-btn ui-bar-b ui-corner-top">Legend</li>
