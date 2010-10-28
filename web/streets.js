@@ -229,6 +229,199 @@ setTimeout("loadHandlers()", 3500);
 setTimeout("$('#loading').hide()", 3500);
 
 var newdata;
+
+	
+var buildQuery = function(arr)
+{
+	var query = {};
+	var group_by = ['state'];
+	var fields = ['state', 'avg('+arr['metric']+')'];
+	if (arr['geo'] == 'county')
+	{
+		fields.push('county');
+		group_by.push('county');
+	}
+	query = {fields: fields.join(','), group_by: group_by.join(',')};
+	return query;
+	
+};
+var formChangeFunction = function() {
+	//alert('awef');
+	$('#loading').show();
+	var arr = {};
+	$.each($("#filter_form").serializeArray(), function(index, data) {
+		arr[data.name] = data.value;
+	});
+	$.ajax({
+			url: 'http://204.232.210.102:5011/query/lar',
+			data: buildQuery(arr),
+			dataType: "jsonp",
+			success: function(data, status){
+				aggregates = aggregateData(data);
+				newdata = data;
+				var k = 0;
+				if(typeof newdata[0].rate_spread != 'undefined') {
+				  metricType = 'rate_spread';
+				}
+				else if(typeof newdata[0].income != 'undefined') {
+				  metricType = 'income';
+				}
+				else if(typeof newdata[0].loan_amount != 'undefined') {
+				  metricType = 'loan_amount';
+				}
+				var min = 3.5;
+				var interval = 0.5;
+				if(metricType == 'rate_spread') {
+				  min = 3.5;
+				  interval = 0.5;
+				  $('#legend_name1').html('0 - 3.5%');
+				  $('#legend_name2').html('3.5 - 4.0%');
+				  $('#legend_name3').html('4.0 - 4.5%');
+				  $('#legend_name4').html('4.5 - 5.0%');
+				  $('#legend_name5').html('5.0 - 5.5%');
+				  $('#legend_name6').html('>6.0%');
+				}
+				else if(metricType == 'income') {
+				  min = 60;
+				  interval = 10;
+				  $('#legend_name1').html('$0 - 60,000');
+				  $('#legend_name2').html('$60,000 - 69,999');
+				  $('#legend_name3').html('$70,000 - 79,999');
+				  $('#legend_name4').html('$80,000 - 89,999');
+				  $('#legend_name5').html('$90,000 - 99,999');
+				  $('#legend_name6').html('>$100,000');
+				}
+				else if(metricType == 'loan_amount') {
+				  min = 50;
+				  interval = 20;
+				  $('#legend_name1').html('$0 - 49,999');
+				  $('#legend_name2').html('$50,000 - 69,999');
+				  $('#legend_name3').html('$70,000 - 89,999');
+				  $('#legend_name4').html('$90,000 - 109,999');
+				  $('#legend_name5').html('$110,000 - 129,999');
+				  $('#legend_name6').html('>$130,000');
+				}
+				var isCounty = false;
+				if(typeof newdata[0].county != 'undefined') {
+				  isCounty = true;
+				}
+				if(isCounty) {
+				  $('.stateClass').unbind('click');
+				  $('.stateClass').unbind('mouseover');
+				  $('.stateClass').unbind('mouseleave');
+				  $('.stateClass').css('fill', 'none');
+				  $('.stateClass').attr('oldcolor', 'none');
+				  for(i = 0; i < 100; i++) {
+					if(i < 10) {
+					  fillColors['state0' + i] = 'none';
+					}
+					else {
+					  fillColors['state' + i] = 'none';
+					}
+				  }
+				}
+				else {
+				  $('.stateClass').click(function() {
+					
+					var id = $(this).attr('stateid').substr(-2);
+					//$('#spotlight_title').html('Spotlight: ' + state_dict[$(this).attr('stateid').substr(-2)]);
+					$('#region_name').html(state_dict[$(this).attr('stateid').substr(-2)]);
+					$('#summary').html('<img src="loading.gif" />');
+					$('#amount').html('');
+					$('#num_homes').html('');
+					$.ajax({
+							url: 'http://204.232.210.102:5011/query/lar',
+							data: {fields:"state,income", state:id},
+							dataType: "jsonp",
+							success: function(data, status){
+								latest_data = data;
+								var aggregates = aggregateData(data);
+							}
+					});
+				  })
+				  .mouseover(function(e) {
+					var userFriendlyMetric = 'Rate Spread';
+					var metricAmount = $(this).attr('metric');
+					if(metricType == 'rate_spread') { metricAmount += '%'; }
+					else if(metricType == 'income') { userFriendlyMetric = 'Income'; metricAmount *= 1000; metricAmount = formatCurrency(metricAmount); }
+					else if(metricType == 'loan_amount') { userFriendlyMetric = 'Loan Amount'; metricAmount *= 1000; metricAmount = formatCurrency(metricAmount); }
+					$('.tipHeader').text(state_dict[$(this).attr('stateid').substr(-2)]);
+					$('.tipBody').text(userFriendlyMetric + ': ' + metricAmount);
+					//Set the X and Y axis of the tooltip  
+					$('#tooltip').css('top', e.pageY + 10 );  
+					$('#tooltip').css('left', e.pageX + 20 );  
+
+					$('#tooltip').show();
+					  
+					$('.' + $(this).attr('stateid')).css('fill', '#fff');
+				  })
+				  .mouseleave(function() {
+					var oldcolor = $(this).attr('oldcolor');
+					$('.' + $(this).attr('stateid')).css('fill', oldcolor);
+					$('#tooltip').hide();
+				  })
+				  .mousemove(function(e) {  
+						$('#tooltip').css('top', e.pageY + 10 );  
+						$('#tooltip').css('left', e.pageX + 20 );  
+
+				  });
+				}
+				for(k = 0; k < newdata.length; k++) {
+				  if(((isCounty && newdata[k].county != "-1") || !isCounty) && newdata[k].state != "-1") {
+					var idname = '';
+					if(isCounty) {
+					  idname = "county" + newdata[k].state + newdata[k].county;
+					}
+					else {
+					  idname = "state" + newdata[k].state;
+					}
+					var metric;
+					
+					if(metricType == 'rate_spread') {
+					  metric = newdata[k].rate_spread;
+					}
+					else if(metricType == 'income') {
+					  metric = newdata[k].income;
+					}
+					else if(metricType == 'loan_amount') {
+					  metric = newdata[k].loan_amount;
+					}
+					
+					$('.' + idname).attr('metric', metric); 
+					
+					var fillval = '#005';
+					if(metric < min) {
+					  fillval = '#005';
+					}
+					else if(metric < min + interval) {
+					  fillval = '#027';
+					}
+					else if(metric < min + 2*interval) {
+					  fillval = '#049';
+					}
+					else if(metric < min + 3*interval) {
+					  fillval = '#16a';
+					}
+					else if(metric < min + 4*interval) {
+					  fillval = '#37d';
+					}
+					else {
+					  fillval = '#58f';
+					}
+					$('.' + idname).css('fill', fillval);
+					$('.' + idname).attr('oldcolor', fillval);
+					fillColors[idname] = fillval;
+					metricArray[idname] = metric;
+				  }
+				}
+				$('#loading').hide();
+			}
+		});
+	return false;
+};
+
+setTimeout("formChangeFunction()", 3501);
+
 $(function(){
 	
 	
@@ -250,193 +443,8 @@ $(function(){
 	  var newData = aggregateData(latest_data, func);
 	});
 	
-	var buildQuery = function(arr)
-	{
-		var query = {};
-		var group_by = ['state'];
-		var fields = ['state', 'avg('+arr['metric']+')'];
-		if (arr['geo'] == 'county')
-		{
-			fields.push('county');
-			group_by.push('county');
-		}
-		query = {fields: fields.join(','), group_by: group_by.join(',')};
-		return query;
-		
-	};
+	
 
 	
-	$("#filter_form input").change(function() {
-	    $('#loading').show();
-		var arr = {};
-		$.each($("#filter_form").serializeArray(), function(index, data) {
-			arr[data.name] = data.value;
-		});
-		$.ajax({
-		        url: 'http://204.232.210.102:5011/query/lar',
-		        data: buildQuery(arr),
-		        dataType: "jsonp",
-		        success: function(data, status){
-					aggregates = aggregateData(data);
-		            newdata = data;
-		            var k = 0;
-		            if(typeof newdata[0].rate_spread != 'undefined') {
-		              metricType = 'rate_spread';
-		            }
-		            else if(typeof newdata[0].income != 'undefined') {
-		              metricType = 'income';
-		            }
-		            else if(typeof newdata[0].loan_amount != 'undefined') {
-		              metricType = 'loan_amount';
-		            }
-		            var min = 3.5;
-		            var interval = 0.5;
-		            if(metricType == 'rate_spread') {
-		              min = 3.5;
-		              interval = 0.5;
-		              $('#legend_name1').html('0 - 3.5%');
-		              $('#legend_name2').html('3.5 - 4.0%');
-		              $('#legend_name3').html('4.0 - 4.5%');
-		              $('#legend_name4').html('4.5 - 5.0%');
-		              $('#legend_name5').html('5.0 - 5.5%');
-		              $('#legend_name6').html('>6.0%');
-		            }
-		            else if(metricType == 'income') {
-		              min = 60;
-		              interval = 10;
-		              $('#legend_name1').html('$0 - 60,000');
-		              $('#legend_name2').html('$60,000 - 69,999');
-		              $('#legend_name3').html('$70,000 - 79,999');
-		              $('#legend_name4').html('$80,000 - 89,999');
-		              $('#legend_name5').html('$90,000 - 99,999');
-		              $('#legend_name6').html('>$100,000');
-		            }
-		            else if(metricType == 'loan_amount') {
-		              min = 50;
-		              interval = 20;
-		              $('#legend_name1').html('$0 - 49,999');
-		              $('#legend_name2').html('$50,000 - 69,999');
-		              $('#legend_name3').html('$70,000 - 89,999');
-		              $('#legend_name4').html('$90,000 - 109,999');
-		              $('#legend_name5').html('$110,000 - 129,999');
-		              $('#legend_name6').html('>$130,000');
-		            }
-		            var isCounty = false;
-		            if(typeof newdata[0].county != 'undefined') {
-		              isCounty = true;
-		            }
-					if(isCounty) {
-					  $('.stateClass').unbind('click');
-					  $('.stateClass').unbind('mouseover');
-					  $('.stateClass').unbind('mouseleave');
-					  $('.stateClass').css('fill', 'none');
-					  $('.stateClass').attr('oldcolor', 'none');
-					  for(i = 0; i < 100; i++) {
-					    if(i < 10) {
-					      fillColors['state0' + i] = 'none';
-					    }
-					    else {
-					      fillColors['state' + i] = 'none';
-					    }
-					  }
-					}
-					else {
-					  $('.stateClass').click(function() {
-					    
-						var id = $(this).attr('stateid').substr(-2);
-						//$('#spotlight_title').html('Spotlight: ' + state_dict[$(this).attr('stateid').substr(-2)]);
-						$('#region_name').html(state_dict[$(this).attr('stateid').substr(-2)]);
-						$('#summary').html('<img src="loading.gif" />');
-						$('#amount').html('');
-						$('#num_homes').html('');
-						$.ajax({
-						        url: 'http://204.232.210.102:5011/query/lar',
-						        data: {fields:"state,income", state:id},
-						        dataType: "jsonp",
-						        success: function(data, status){
-									latest_data = data;
-									var aggregates = aggregateData(data);
-								}
-						});
-					  })
-					  .mouseover(function(e) {
-					    var userFriendlyMetric = 'Rate Spread';
-					    var metricAmount = $(this).attr('metric');
-					    if(metricType == 'rate_spread') { metricAmount += '%'; }
-					    else if(metricType == 'income') { userFriendlyMetric = 'Income'; metricAmount *= 1000; metricAmount = formatCurrency(metricAmount); }
-					    else if(metricType == 'loan_amount') { userFriendlyMetric = 'Loan Amount'; metricAmount *= 1000; metricAmount = formatCurrency(metricAmount); }
-						$('.tipHeader').text(state_dict[$(this).attr('stateid').substr(-2)]);
-						$('.tipBody').text(userFriendlyMetric + ': ' + metricAmount);
-				        //Set the X and Y axis of the tooltip  
-				        $('#tooltip').css('top', e.pageY + 10 );  
-				        $('#tooltip').css('left', e.pageX + 20 );  
-
-						$('#tooltip').show();
-						  
-						$('.' + $(this).attr('stateid')).css('fill', '#fff');
-					  })
-					  .mouseleave(function() {
-						var oldcolor = $(this).attr('oldcolor');
-						$('.' + $(this).attr('stateid')).css('fill', oldcolor);
-						$('#tooltip').hide();
-					  })
-					  .mousemove(function(e) {  
-					        $('#tooltip').css('top', e.pageY + 10 );  
-					        $('#tooltip').css('left', e.pageX + 20 );  
-
-					  });
-					}
-		            for(k = 0; k < newdata.length; k++) {
-		              if(((isCounty && newdata[k].county != "-1") || !isCounty) && newdata[k].state != "-1") {
-		                var idname = '';
-		                if(isCounty) {
-		                  idname = "county" + newdata[k].state + newdata[k].county;
-		                }
-						else {
-						  idname = "state" + newdata[k].state;
-						}
-		                var metric;
-		                
-		                if(metricType == 'rate_spread') {
-		                  metric = newdata[k].rate_spread;
-		                }
-		                else if(metricType == 'income') {
-		                  metric = newdata[k].income;
-		                }
-		                else if(metricType == 'loan_amount') {
-		                  metric = newdata[k].loan_amount;
-		                }
-		                
-		                $('.' + idname).attr('metric', metric); 
-		                
-		                var fillval = '#005';
-		                if(metric < min) {
-		                  fillval = '#005';
-		                }
-		                else if(metric < min + interval) {
-		                  fillval = '#027';
-		                }
-		                else if(metric < min + 2*interval) {
-		                  fillval = '#049';
-		                }
-		                else if(metric < min + 3*interval) {
-		                  fillval = '#16a';
-		                }
-		                else if(metric < min + 4*interval) {
-		                  fillval = '#37d';
-		                }
-		                else {
-		                  fillval = '#58f';
-		                }
-		                $('.' + idname).css('fill', fillval);
-		                $('.' + idname).attr('oldcolor', fillval);
-		                fillColors[idname] = fillval;
-		                metricArray[idname] = metric;
-		              }
-		            }
-		            $('#loading').hide();
-		        }
-		    });
-		return false;
-	});
+	$("#filter_form input").change(formChangeFunction);
 });
