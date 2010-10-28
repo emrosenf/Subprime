@@ -210,11 +210,15 @@ var aggregateData = function(arr,func)
 	});
 	if (!func)
 	{
+	    /*
 		$("#slider-range").slider({
 		min: agg["income"]["min"],
 		max: agg["income"]["max"],
 		values: [agg["income"]["min"], agg["income"]["max"]],
 		});
+		*/
+		$('#range_min').val(agg["income"]["min"] * 1000);
+		$('#range_max').val(agg["income"]["max"] * 1000);
 		$("#amount").text('Range: ' + formatCurrency(agg["income"]["min"]*1000) + ' - ' + formatCurrency(agg["income"]["max"]*1000));
 	}
 	$("#num_homes").text(num_homes + " homes");
@@ -340,6 +344,7 @@ var formChangeFunction = function() {
 					var id = $(this).attr('stateid').substr(-2);
 					//$('#spotlight_title').html('Spotlight: ' + state_dict[$(this).attr('stateid').substr(-2)]);
 					$('#region_name').html(state_dict[$(this).attr('stateid').substr(-2)]);
+					$('.range_input').val('');
 					$('#summary').html('<img src="loading.gif" />');
 					$('#amount').html('');
 					$('#num_homes').html('');
@@ -437,8 +442,7 @@ var formChangeFunction = function() {
 setTimeout("formChangeFunction()", 3501);
 
 $(function(){
-	
-	
+	/*
 	$("#slider-range").slider({
 		range: true,
 		min: 0,
@@ -456,8 +460,17 @@ $(function(){
 	  };
 	  var newData = aggregateData(latest_data, func);
 	});
-	
-	
+	*/
+	$(".range_input").change(function() {
+	  valMin = $('#range_min').val();
+	  valMax = $('#range_max').val();
+	  $("#amount").text('Range: ' + formatCurrency(valMin) + ' - ' + formatCurrency(valMax));
+	  var func = function(obj) { 
+		var val = parseInt(obj['income']);
+		return (valMin / 1000 <= val && val <= valMax / 1000);
+	  };
+	  var newData = aggregateData(latest_data, func);
+	});
 
 	
 	$("#filter_form input").change(formChangeFunction);

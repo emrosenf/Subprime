@@ -183,3 +183,9 @@ body {
   border-color: #000;
   border: 5px solid;
 }
+
+.range_input {
+  width: 70px;
+  font-size: 14px;
+  font-family: "Lucida Grande", Arial;
+}
