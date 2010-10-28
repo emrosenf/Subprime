@@ -48,6 +48,19 @@ var counter = 0;
 var fillColors = new Array();
 var metricArray = new Array();
 
+$('#about_link').click(function() {
+  $('#about_popup').show();
+});
+
+$('#about_popup').click(function() {
+  $('#about_popup').hide();
+});
+
+var revealSpotlight = function() {
+  $('#filter_bottom_title').html('Top Lenders');
+  $('#spotlight_body1').show();
+}
+
 function loadState(e) {
   for (var i = 0; i < e.features.length; i++) {
 	var feature = e.features[i];
@@ -107,6 +120,7 @@ function load(e) {
 	$('#county' + counter).attr('oldcolor', fillColors[tempid]);
 	$('#county' + counter).attr('metric', metricArray[tempid]);
     $('#county' + counter).click(function() {
+        revealSpotlight();
 	    var id = $(this).attr('countyid').substr(-5);
 	    $('#region_name').html(state_dict[$(this).attr('countyid').substr(6,2)] + ", county " + $(this).attr('countyid').substr(-3));
 	    $('#summary').html('<img src="loading.gif" />');
@@ -279,7 +293,7 @@ var formChangeFunction = function() {
 				  $('#legend_name3').html('4.0 - 4.5%');
 				  $('#legend_name4').html('4.5 - 5.0%');
 				  $('#legend_name5').html('5.0 - 5.5%');
-				  $('#legend_name6').html('>6.0%');
+				  $('#legend_name6').html('>5.5%');
 				}
 				else if(metricType == 'income') {
 				  min = 60;
@@ -322,7 +336,7 @@ var formChangeFunction = function() {
 				}
 				else {
 				  $('.stateClass').click(function() {
-					
+					revealSpotlight();
 					var id = $(this).attr('stateid').substr(-2);
 					//$('#spotlight_title').html('Spotlight: ' + state_dict[$(this).attr('stateid').substr(-2)]);
 					$('#region_name').html(state_dict[$(this).attr('stateid').substr(-2)]);

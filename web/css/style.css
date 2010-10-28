@@ -170,3 +170,16 @@ body {
   stroke: #fff;
   stroke-width: 1.5px;
 }
+
+#about_popup {
+  display: none;
+  position: absolute;
+  margin-top: 220px;
+  margin-left: 38%;
+  width: 300px;
+  height: 200px;
+  padding: 10px;
+  background-color: #fff;
+  border-color: #000;
+  border: 5px solid;
+}
